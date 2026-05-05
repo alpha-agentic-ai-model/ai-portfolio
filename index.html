@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANIKANTA PUDOKA | AI Engineer Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a2e;--surface3:#16213e;
+  --accent:#6c63ff;--accent2:#00d4ff;--accent3:#ff6b6b;--accent4:#ffd93d;
+  --text:#e8e8f0;--text2:#a0a0b8;--text3:#6a6a82;
+  --grad1:linear-gradient(135deg,#6c63ff,#00d4ff);
+  --grad2:linear-gradient(135deg,#ff6b6b,#ffd93d);
+  --grad3:linear-gradient(135deg,#00d4ff,#6c63ff);
+  --glass:rgba(255,255,255,0.03);--glass-border:rgba(255,255,255,0.08);
+  --radius:16px;--radius-sm:10px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+
+/* Animated background */
+.bg-grid{position:fixed;inset:0;z-index:0;opacity:.15;
+  background-image:
+    linear-gradient(rgba(108,99,255,.15) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(108,99,255,.15) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.bg-glow{position:fixed;z-index:0;border-radius:50%;filter:blur(120px);opacity:.3;pointer-events:none}
+.bg-glow-1{width:600px;height:600px;background:#6c63ff;top:-200px;left:-200px}
+.bg-glow-2{width:500px;height:500px;background:#00d4ff;bottom:-150px;right:-150px}
+.bg-glow-3{width:400px;height:400px;background:#ff6b6b;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* Utility */
+.container{max-width:1200px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+section{padding:100px 0}
+
+/* Navigation */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:all .3s ease;backdrop-filter:blur(20px);background:rgba(10,10,15,.7);border-bottom:1px solid transparent}
+nav.scrolled{border-bottom-color:var(--glass-border);padding:10px 0}
+.nav-inner{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:1.2rem;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;cursor:pointer}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:.9rem;font-weight:500;transition:color .3s}
+.nav-links a:hover{color:var(--accent2)}
+.menu-btn{display:none;background:none;border:none;color:var(--text);font-size:1.5rem;cursor:pointer}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:80px}
+.hero-content{max-width:750px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:50px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);font-size:.82rem;font-weight:500;color:var(--accent);margin-bottom:28px;animation:fadeInUp .8s ease}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(2.8rem,6vw,4.5rem);font-weight:900;line-height:1.08;margin-bottom:24px;animation:fadeInUp .8s ease .1s both}
+.hero h1 .gradient{background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.15rem;color:var(--text2);max-width:580px;margin-bottom:40px;animation:fadeInUp .8s ease .2s both}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;animation:fadeInUp .8s ease .3s both}
+.btn{padding:14px 32px;border-radius:50px;font-weight:600;font-size:.95rem;text-decoration:none;transition:all .3s ease;cursor:pointer;border:none;font-family:inherit}
+.btn-primary{background:var(--grad1);color:#fff;box-shadow:0 4px 25px rgba(108,99,255,.35)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(108,99,255,.5)}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--glass-border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.hero-stats{display:flex;gap:48px;margin-top:64px;animation:fadeInUp .8s ease .4s both}
+.stat-item .stat-num{font-size:2rem;font-weight:800;background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-item .stat-label{font-size:.82rem;color:var(--text3);margin-top:2px}
+
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* Section headers */
+.section-header{text-align:center;margin-bottom:64px}
+.section-tag{display:inline-block;padding:6px 16px;border-radius:50px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);font-size:.8rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px}
+.section-header h2{font-size:clamp(2rem,4vw,3rem);font-weight:800}
+.section-header p{color:var(--text2);margin-top:12px;max-width:600px;margin-left:auto;margin-right:auto}
+
+/* Skills */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.skill-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:28px;transition:all .3s ease;position:relative;overflow:hidden}
+.skill-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad1);opacity:0;transition:opacity .3s}
+.skill-card:hover{transform:translateY(-4px);border-color:rgba(108,99,255,.3)}
+.skill-card:hover::before{opacity:1}
+.skill-icon{font-size:2rem;margin-bottom:14px}
+.skill-card h3{font-size:1.05rem;font-weight:700;margin-bottom:8px}
+.skill-card p{font-size:.85rem;color:var(--text2)}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.skill-tag{padding:4px 10px;border-radius:6px;background:rgba(108,99,255,.08);font-size:.72rem;color:var(--accent);font-weight:500}
+
+/* Projects */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:24px}
+.project-card{background:var(--surface);border:1px solid var(--glass-border);border-radius:var(--radius);overflow:hidden;transition:all .4s ease;position:relative}
+.project-card:hover{transform:translateY(-6px);border-color:rgba(108,99,255,.35);box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.project-header{padding:24px 24px 0;display:flex;justify-content:space-between;align-items:flex-start}
+.project-num{font-size:.75rem;font-weight:700;color:var(--accent);background:rgba(108,99,255,.1);padding:4px 12px;border-radius:20px}
+.project-category{font-size:.7rem;font-weight:600;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.8px}
+.cat-agent{background:rgba(255,107,107,.12);color:#ff6b6b}
+.cat-rag{background:rgba(0,212,255,.12);color:#00d4ff}
+.cat-mlops{background:rgba(255,217,61,.12);color:#ffd93d}
+.cat-llm{background:rgba(108,99,255,.12);color:#6c63ff}
+.cat-dl{background:rgba(74,222,128,.12);color:#4ade80}
+.project-body{padding:20px 24px}
+.project-body h3{font-size:1.2rem;font-weight:700;margin-bottom:10px;line-height:1.3}
+.project-body>p{font-size:.88rem;color:var(--text2);margin-bottom:16px;line-height:1.55}
+.project-tech{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.tech-tag{padding:5px 12px;border-radius:6px;background:var(--surface2);font-size:.75rem;font-weight:500;color:var(--text2);border:1px solid var(--glass-border)}
+
+/* Code preview */
+.code-block{background:#0d1117;border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:18px}
+.code-header{display:flex;align-items:center;gap:6px;padding:10px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
+.code-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid}
+.code-dot:nth-child(1){border-color:#ff5f57}
+.code-dot:nth-child(2){border-color:#febc2e}
+.code-dot:nth-child(3){border-color:#28c840}
+.code-filename{margin-left:8px;font-size:.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.code-body{padding:14px;font-family:'JetBrains Mono',monospace;font-size:.73rem;line-height:1.65;color:#c9d1d9;overflow-x:auto;max-height:180px}
+.code-body .kw{color:#ff7b72}
+.code-body .fn{color:#d2a8ff}
+.code-body .str{color:#a5d6ff}
+.code-body .cm{color:#8b949e}
+.code-body .cls{color:#ffa657}
+.code-body .dec{color:#79c0ff}
+
+.project-footer{padding:0 24px 20px;display:flex;gap:10px}
+.project-link{padding:8px 18px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .3s}
+.link-code{background:rgba(108,99,255,.1);color:var(--accent);border:1px solid rgba(108,99,255,.2)}
+.link-code:hover{background:rgba(108,99,255,.2)}
+.link-demo{background:rgba(0,212,255,.1);color:var(--accent2);border:1px solid rgba(0,212,255,.2)}
+.link-demo:hover{background:rgba(0,212,255,.2)}
+
+/* Architecture section in project */
+.arch-diagram{background:var(--surface2);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;font-size:.75rem;color:var(--text2);font-family:'JetBrains Mono',monospace;line-height:1.7;text-align:center}
+.arch-diagram .arrow{color:var(--accent)}
+.arch-diagram .node{color:var(--accent2);font-weight:600}
+
+/* Contact */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:800px;margin:0 auto}
+.contact-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;text-align:center;transition:all .3s;text-decoration:none;color:var(--text)}
+.contact-card:hover{transform:translateY(-4px);border-color:rgba(108,99,255,.3)}
+.contact-icon{font-size:1.8rem;margin-bottom:10px}
+.contact-card h4{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.contact-card p{font-size:.8rem;color:var(--text2)}
+
+/* Footer */
+footer{border-top:1px solid var(--glass-border);padding:40px 0;text-align:center}
+footer p{font-size:.85rem;color:var(--text3)}
+
+/* Project filter */
+.filter-bar{display:flex;justify-content:center;gap:10px;margin-bottom:40px;flex-wrap:wrap}
+.filter-btn{padding:8px 20px;border-radius:50px;border:1px solid var(--glass-border);background:transparent;color:var(--text2);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .3s;font-family:inherit}
+.filter-btn:hover,.filter-btn.active{background:rgba(108,99,255,.15);border-color:var(--accent);color:var(--accent)}
+
+/* Day badge */
+.day-badge{text-align:center;margin-bottom:20px;font-size:.82rem;color:var(--text3);font-weight:500}
+.day-badge span{background:var(--grad1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .menu-btn{display:block}
+  .hero-stats{gap:24px;flex-wrap:wrap}
+  .projects-grid{grid-template-columns:1fr}
+  .hero h1{font-size:2.2rem}
+  section{padding:60px 0}
+}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(40px);transition:all .8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+<div class="container nav-inner">
+  <a href="#about" class="logo" style="text-decoration:none">MANIKANTA PUDOKA</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('show')">&#9776;</button>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="about">
+<div class="container">
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span> Available for AI Engineering roles</div>
+    <h1>Building the Future<br>with <span class="gradient">Agentic AI</span></h1>
+    <p>I'm <strong>MANIKANTA PUDOKA</strong> &mdash; an AI Engineer specializing in multi-agent systems, LLM orchestration, RAG pipelines, and production MLOps. I build AI that ships.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num" id="projCount">10</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
+      <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+<div class="container">
+  <div class="section-header reveal">
+    <div class="section-tag">Expertise</div>
+    <h2>Core AI Skills</h2>
+    <p>Deep expertise across the modern AI engineering stack</p>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon">&#129302;</div>
+      <h3>Agentic AI & Multi-Agent Systems</h3>
+      <p>Designing orchestrated agent teams that collaborate to solve complex workflows autonomously.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">LangGraph</span><span class="skill-tag">CrewAI</span>
+        <span class="skill-tag">AutoGen</span><span class="skill-tag">OpenAI Agents SDK</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">&#128218;</div>
+      <h3>RAG & Knowledge Systems</h3>
+      <p>Building retrieval-augmented generation pipelines with hybrid search, re-ranking, and agentic document workflows.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">LlamaIndex</span><span class="skill-tag">ChromaDB</span>
+        <span class="skill-tag">Pinecone</span><span class="skill-tag">FAISS</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">&#9881;&#65039;</div>
+      <h3>LLM Engineering</h3>
+      <p>Prompt engineering, fine-tuning, function calling, structured outputs, and model evaluation at scale.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">OpenAI</span><span class="skill-tag">Claude API</span>
+        <span class="skill-tag">Gemini</span><span class="skill-tag">HuggingFace</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">&#128640;</div>
+      <h3>MLOps & Deployment</h3>
+      <p>End-to-end ML pipelines, model serving, monitoring, drift detection, and cloud-native AI deployment.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">Docker</span><span class="skill-tag">Kubernetes</span>
+        <span class="skill-tag">MLflow</span><span class="skill-tag">AWS/GCP</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">&#128065;</div>
+      <h3>Deep Learning & Vision</h3>
+      <p>Computer vision, transformers, diffusion models, and multimodal AI architectures.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">PyTorch</span><span class="skill-tag">TensorFlow</span>
+        <span class="skill-tag">YOLO</span><span class="skill-tag">Diffusers</span>
+      </div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">&#128279;</div>
+      <h3>MCP & Agent Protocols</h3>
+      <p>Building and integrating Model Context Protocol servers, A2A protocol, and tool-use frameworks for AI agents.</p>
+      <div class="skill-tags">
+        <span class="skill-tag">MCP</span><span class="skill-tag">A2A</span>
+        <span class="skill-tag">Tool Use</span><span class="skill-tag">Function Calling</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+<div class="container">
+  <div class="section-header reveal">
+    <div class="section-tag">Portfolio</div>
+    <h2>AI Projects</h2>
+    <p>Production-grade AI systems built with cutting-edge frameworks</p>
+  </div>
+
+  <div class="day-badge reveal">Day <span>1</span> &mdash; May 5, 2026</div>
+
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="agent">Agentic AI</button>
+    <button class="filter-btn" data-filter="rag">RAG</button>
+    <button class="filter-btn" data-filter="llm">LLM</button>
+    <button class="filter-btn" data-filter="mlops">MLOps</button>
+    <button class="filter-btn" data-filter="dl">Deep Learning</button>
+  </div>
+
+  <div class="projects-grid" id="projectsGrid">
+
+    <!-- PROJECT 1 -->
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#01</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Multi-Agent Research & Report Generator</h3>
+        <p>An orchestrated multi-agent system where specialized agents (Researcher, Analyst, Writer, Editor) collaborate to produce comprehensive research reports from a single topic prompt. Uses LangGraph for state management and agent handoffs.</p>
+        <div class="arch-diagram">
+          <span class="node">[User Query]</span> <span class="arrow">&rarr;</span> <span class="node">[Orchestrator]</span> <span class="arrow">&rarr;</span> <span class="node">[Researcher]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Analyst]</span> <span class="arrow">&rarr;</span> <span class="node">[Writer]</span> <span class="arrow">&rarr;</span> <span class="node">[Editor]</span> <span class="arrow">&rarr;</span> <span class="node">[Final Report]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">LangGraph</span><span class="tech-tag">GPT-4o</span>
+          <span class="tech-tag">Tavily API</span><span class="tech-tag">Python</span>
+          <span class="tech-tag">Async IO</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">agents/orchestrator.py</span></div>
+          <div class="code-body"><span class="kw">from</span> langgraph.graph <span class="kw">import</span> StateGraph, END
+<span class="kw">from</span> agents <span class="kw">import</span> researcher, analyst, writer, editor
+
+<span class="kw">class</span> <span class="cls">ResearchState</span>(TypedDict):
+    topic: <span class="cls">str</span>
+    sources: list[<span class="cls">Document</span>]
+    analysis: <span class="cls">str</span>
+    draft: <span class="cls">str</span>
+    final_report: <span class="cls">str</span>
+
+workflow = StateGraph(<span class="cls">ResearchState</span>)
+workflow.<span class="fn">add_node</span>(<span class="str">"research"</span>, researcher.run)
+workflow.<span class="fn">add_node</span>(<span class="str">"analyze"</span>, analyst.run)
+workflow.<span class="fn">add_node</span>(<span class="str">"write"</span>, writer.run)
+workflow.<span class="fn">add_node</span>(<span class="str">"edit"</span>, editor.run)
+workflow.<span class="fn">add_edge</span>(<span class="str">"research"</span>, <span class="str">"analyze"</span>)
+workflow.<span class="fn">add_edge</span>(<span class="str">"analyze"</span>, <span class="str">"write"</span>)
+workflow.<span class="fn">add_conditional_edges</span>(<span class="str">"edit"</span>,
+    quality_gate, {<span class="str">"pass"</span>: END, <span class="str">"revise"</span>: <span class="str">"write"</span>})
+app = workflow.<span class="fn">compile</span>()</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#02</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Agentic RAG with Hybrid Search & Self-Correction</h3>
+        <p>An advanced RAG pipeline that goes beyond naive retrieval. Implements hybrid search (BM25 + semantic), cross-encoder re-ranking, query decomposition, and a self-corrective loop that detects hallucinations and re-retrieves context.</p>
+        <div class="arch-diagram">
+          <span class="node">[Query]</span> <span class="arrow">&rarr;</span> <span class="node">[Decomposer]</span> <span class="arrow">&rarr;</span> <span class="node">[Hybrid Search]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Re-ranker]</span> <span class="arrow">&rarr;</span> <span class="node">[Generator]</span> <span class="arrow">&rarr;</span> <span class="node">[Hallucination Check]</span><br>
+          <span class="arrow">&darr;</span> <span class="cm">(if fails)</span> <span class="arrow">&rarr;</span> <span class="node">[Re-retrieve]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">LlamaIndex</span><span class="tech-tag">ChromaDB</span>
+          <span class="tech-tag">Cohere Rerank</span><span class="tech-tag">FastAPI</span>
+          <span class="tech-tag">Claude API</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">rag/pipeline.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">AgenticRAG</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, llm, vector_store, bm25_index):
+        self.llm = llm
+        self.hybrid_retriever = <span class="cls">HybridRetriever</span>(
+            vector=vector_store, sparse=bm25_index,
+            alpha=<span class="dec">0.7</span>  <span class="cm"># semantic weight</span>
+        )
+        self.reranker = <span class="cls">CohereRerank</span>(top_n=<span class="dec">5</span>)
+        self.hallucination_checker = <span class="cls">HallucinationGrader</span>(llm)
+
+    <span class="kw">async def</span> <span class="fn">query</span>(self, question, max_retries=<span class="dec">2</span>):
+        sub_queries = <span class="kw">await</span> self.<span class="fn">decompose</span>(question)
+        docs = <span class="kw">await</span> self.hybrid_retriever.<span class="fn">retrieve</span>(sub_queries)
+        ranked = self.reranker.<span class="fn">rerank</span>(question, docs)
+        <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_retries):
+            answer = <span class="kw">await</span> self.llm.<span class="fn">generate</span>(question, ranked)
+            <span class="kw">if</span> self.hallucination_checker.<span class="fn">verify</span>(answer, ranked):
+                <span class="kw">return</span> answer
+            ranked = <span class="kw">await</span> self.<span class="fn">re_retrieve</span>(question)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 3 -->
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#03</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>MCP-Powered AI DevOps Agent</h3>
+        <p>A production DevOps agent that uses Model Context Protocol (MCP) to connect to GitHub, Jira, Slack, and cloud infrastructure. Automates PR reviews, incident triage, and deployment status reporting through natural language commands.</p>
+        <div class="arch-diagram">
+          <span class="node">[User NL Command]</span> <span class="arrow">&rarr;</span> <span class="node">[Agent Core]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[MCP Server: GitHub]</span> | <span class="node">[MCP Server: Jira]</span> | <span class="node">[MCP Server: Slack]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Action Executor]</span> <span class="arrow">&rarr;</span> <span class="node">[Response Synthesizer]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MCP Protocol</span><span class="tech-tag">Claude 4</span>
+          <span class="tech-tag">TypeScript</span><span class="tech-tag">Docker</span>
+          <span class="tech-tag">GitHub API</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">mcp_servers/github_server.ts</span></div>
+          <div class="code-body"><span class="kw">import</span> { McpServer } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server"</span>;
+
+<span class="kw">const</span> server = <span class="kw">new</span> <span class="cls">McpServer</span>({
+  name: <span class="str">"github-devops"</span>,
+  version: <span class="str">"1.0.0"</span>
+});
+
+server.<span class="fn">tool</span>(<span class="str">"review_pr"</span>,
+  { repo: z.<span class="fn">string</span>(), pr_number: z.<span class="fn">number</span>() },
+  <span class="kw">async</span> ({ repo, pr_number }) => {
+    <span class="kw">const</span> diff = <span class="kw">await</span> github.<span class="fn">getPRDiff</span>(repo, pr_number);
+    <span class="kw">const</span> review = <span class="kw">await</span> <span class="fn">analyzeCode</span>(diff);
+    <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>,
+      text: review.summary }] };
+  }
+);
+
+server.<span class="fn">tool</span>(<span class="str">"triage_incident"</span>,
+  { alert_id: z.<span class="fn">string</span>() },
+  <span class="kw">async</span> ({ alert_id }) => {
+    <span class="kw">const</span> logs = <span class="kw">await</span> <span class="fn">fetchLogs</span>(alert_id);
+    <span class="kw">return</span> <span class="fn">classifyAndRoute</span>(logs);
+  }
+);</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 4 -->
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#04</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>Real-Time ML Model Monitoring & Auto-Retraining Pipeline</h3>
+        <p>A complete MLOps pipeline that monitors deployed models for data drift, concept drift, and performance degradation. Automatically triggers retraining when thresholds are breached, with canary deployments and A/B testing support.</p>
+        <div class="arch-diagram">
+          <span class="node">[Prod Model]</span> <span class="arrow">&rarr;</span> <span class="node">[Metrics Collector]</span> <span class="arrow">&rarr;</span> <span class="node">[Drift Detector]</span><br>
+          <span class="arrow">&darr;</span> <span class="cm">(drift detected)</span><br>
+          <span class="node">[Data Pipeline]</span> <span class="arrow">&rarr;</span> <span class="node">[Auto Retrain]</span> <span class="arrow">&rarr;</span> <span class="node">[Canary Deploy]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MLflow</span><span class="tech-tag">Evidently AI</span>
+          <span class="tech-tag">Kubernetes</span><span class="tech-tag">Prometheus</span>
+          <span class="tech-tag">Grafana</span><span class="tech-tag">Apache Kafka</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">monitoring/drift_detector.py</span></div>
+          <div class="code-body"><span class="kw">from</span> evidently.metrics <span class="kw">import</span> DataDriftPreset
+<span class="kw">from</span> evidently <span class="kw">import</span> Report
+
+<span class="kw">class</span> <span class="cls">DriftMonitor</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, reference_data, threshold=<span class="dec">0.15</span>):
+        self.reference = reference_data
+        self.threshold = threshold
+
+    <span class="kw">def</span> <span class="fn">check_drift</span>(self, current_batch):
+        report = <span class="cls">Report</span>(metrics=[<span class="cls">DataDriftPreset</span>()])
+        report.<span class="fn">run</span>(
+            reference_data=self.reference,
+            current_data=current_batch
+        )
+        drift_score = report.<span class="fn">as_dict</span>()[<span class="str">"metrics"</span>][<span class="dec">0</span>]
+        <span class="kw">if</span> drift_score[<span class="str">"share_drifted"</span>] > self.threshold:
+            self.<span class="fn">trigger_retraining</span>(current_batch)
+            self.<span class="fn">alert_team</span>(drift_score)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 5 -->
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#05</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>Text-to-SQL AI Assistant with Schema-Aware Prompting</h3>
+        <p>A natural language to SQL converter that injects database schemas, applies chain-of-thought reasoning, validates generated queries against a sandbox, and handles complex joins and aggregations with 94% accuracy on the Spider benchmark.</p>
+        <div class="arch-diagram">
+          <span class="node">[NL Question]</span> <span class="arrow">&rarr;</span> <span class="node">[Schema Injector]</span> <span class="arrow">&rarr;</span> <span class="node">[SQL Generator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Sandbox Validator]</span> <span class="arrow">&rarr;</span> <span class="node">[Error Corrector]</span> <span class="arrow">&rarr;</span> <span class="node">[Results + Explanation]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">SQLAlchemy</span>
+          <span class="tech-tag">Streamlit</span><span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">Pydantic</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">sql_agent/generator.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">TextToSQL</span>:
+    <span class="kw">def</span> <span class="fn">generate</span>(self, question: <span class="cls">str</span>, db_schema: <span class="cls">Schema</span>):
+        prompt = self.<span class="fn">build_prompt</span>(
+            question=question,
+            tables=db_schema.tables,
+            relationships=db_schema.foreign_keys,
+            sample_rows=db_schema.<span class="fn">get_samples</span>(n=<span class="dec">3</span>)
+        )
+        response = self.llm.<span class="fn">create</span>(
+            model=<span class="str">"claude-sonnet-4-6"</span>,
+            messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: prompt}],
+            tools=[{<span class="str">"name"</span>: <span class="str">"execute_sql"</span>,
+                    <span class="str">"input_schema"</span>: sql_tool_schema}]
+        )
+        sql = self.<span class="fn">extract_sql</span>(response)
+        <span class="kw">if</span> <span class="kw">not</span> self.sandbox.<span class="fn">validate</span>(sql):
+            sql = self.<span class="fn">self_correct</span>(sql, question)
+        <span class="kw">return</span> sql, self.<span class="fn">explain</span>(sql)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 6 -->
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#06</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Vision-Language Model for Document Understanding</h3>
+        <p>A fine-tuned vision-language model that extracts structured data from complex documents (invoices, receipts, contracts). Uses LoRA adapters on a multimodal backbone, achieving 97% field extraction accuracy on custom enterprise datasets.</p>
+        <div class="arch-diagram">
+          <span class="node">[Document Image]</span> <span class="arrow">&rarr;</span> <span class="node">[Vision Encoder]</span> <span class="arrow">&rarr;</span> <span class="node">[Cross-Attention]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Language Decoder + LoRA]</span> <span class="arrow">&rarr;</span> <span class="node">[Structured JSON Output]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">HuggingFace PEFT</span>
+          <span class="tech-tag">Florence-2</span><span class="tech-tag">LoRA</span>
+          <span class="tech-tag">Weights & Biases</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">vlm/fine_tune.py</span></div>
+          <div class="code-body"><span class="kw">from</span> peft <span class="kw">import</span> LoraConfig, get_peft_model
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoProcessor, AutoModelForVision2Seq
+
+model = <span class="cls">AutoModelForVision2Seq</span>.<span class="fn">from_pretrained</span>(
+    <span class="str">"microsoft/Florence-2-large"</span>
+)
+lora_config = <span class="cls">LoraConfig</span>(
+    r=<span class="dec">16</span>, lora_alpha=<span class="dec">32</span>,
+    target_modules=[<span class="str">"q_proj"</span>, <span class="str">"v_proj"</span>],
+    lora_dropout=<span class="dec">0.05</span>,
+    task_type=<span class="str">"VL_SEQ2SEQ"</span>
+)
+model = <span class="fn">get_peft_model</span>(model, lora_config)
+<span class="fn">print</span>(<span class="str">f"Trainable: <span class="dec">{model.print_trainable_parameters()}</span>"</span>)
+
+trainer = <span class="cls">VLTrainer</span>(
+    model=model, train_dataset=doc_dataset,
+    eval_dataset=eval_dataset,
+    compute_metrics=<span class="fn">field_accuracy</span>
+)
+trainer.<span class="fn">train</span>()</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 7 -->
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#07</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>AI Customer Support Crew with CrewAI</h3>
+        <p>A multi-agent customer support system using CrewAI where specialized agents handle ticket classification, sentiment analysis, response drafting, and escalation routing. Integrates with Zendesk and Slack for end-to-end automation with human-in-the-loop approval.</p>
+        <div class="arch-diagram">
+          <span class="node">[Incoming Ticket]</span> <span class="arrow">&rarr;</span> <span class="node">[Classifier Agent]</span> <span class="arrow">&rarr;</span> <span class="node">[Sentiment Agent]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Response Drafter]</span> <span class="arrow">&rarr;</span> <span class="node">[QA Agent]</span> <span class="arrow">&rarr;</span> <span class="node">[Human Approval / Auto-send]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">CrewAI</span><span class="tech-tag">Claude API</span>
+          <span class="tech-tag">Zendesk API</span><span class="tech-tag">FastAPI</span>
+          <span class="tech-tag">Redis</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">crew/support_crew.py</span></div>
+          <div class="code-body"><span class="kw">from</span> crewai <span class="kw">import</span> Agent, Task, Crew, Process
+
+classifier = <span class="cls">Agent</span>(
+    role=<span class="str">"Ticket Classifier"</span>,
+    goal=<span class="str">"Classify tickets by urgency and category"</span>,
+    backstory=<span class="str">"Expert at understanding customer intent"</span>,
+    llm=<span class="str">"claude-sonnet-4-6"</span>,
+    tools=[zendesk_reader, sentiment_tool]
+)
+responder = <span class="cls">Agent</span>(
+    role=<span class="str">"Response Drafter"</span>,
+    goal=<span class="str">"Draft empathetic, accurate responses"</span>,
+    backstory=<span class="str">"Senior support engineer with 10yr exp"</span>,
+    llm=<span class="str">"claude-sonnet-4-6"</span>,
+    tools=[kb_search, template_engine]
+)
+crew = <span class="cls">Crew</span>(
+    agents=[classifier, responder, qa_agent],
+    tasks=[classify_task, draft_task, review_task],
+    process=<span class="cls">Process</span>.sequential
+)
+result = crew.<span class="fn">kickoff</span>(inputs={<span class="str">"ticket"</span>: ticket})</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 8 -->
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#08</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>LLM Evaluation & Red-Teaming Framework</h3>
+        <p>A comprehensive evaluation framework for LLMs that benchmarks accuracy, hallucination rates, latency, and safety. Includes automated red-teaming with adversarial prompt generation, regression testing, and cost-per-query tracking across multiple model providers.</p>
+        <div class="arch-diagram">
+          <span class="node">[Test Suite]</span> <span class="arrow">&rarr;</span> <span class="node">[Multi-Model Runner]</span> <span class="arrow">&rarr;</span> <span class="node">[Eval Pipeline]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Red Team Generator]</span> <span class="arrow">&rarr;</span> <span class="node">[Safety Scorer]</span> <span class="arrow">&rarr;</span> <span class="node">[Dashboard + Reports]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">DeepEval</span><span class="tech-tag">LangSmith</span>
+          <span class="tech-tag">Pydantic</span><span class="tech-tag">Pytest</span>
+          <span class="tech-tag">Streamlit</span><span class="tech-tag">OpenAI / Claude</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">evals/benchmark.py</span></div>
+          <div class="code-body"><span class="kw">from</span> deepeval <span class="kw">import</span> evaluate
+<span class="kw">from</span> deepeval.metrics <span class="kw">import</span> HallucinationMetric, AnswerRelevancyMetric
+<span class="kw">from</span> deepeval.test_case <span class="kw">import</span> LLMTestCase
+
+<span class="kw">class</span> <span class="cls">ModelBenchmark</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, models: list[<span class="cls">str</span>]):
+        self.models = models
+        self.metrics = [
+            <span class="cls">HallucinationMetric</span>(threshold=<span class="dec">0.8</span>),
+            <span class="cls">AnswerRelevancyMetric</span>(threshold=<span class="dec">0.7</span>),
+        ]
+
+    <span class="kw">async def</span> <span class="fn">run_benchmark</span>(self, test_cases):
+        results = {}
+        <span class="kw">for</span> model <span class="kw">in</span> self.models:
+            cases = [<span class="cls">LLMTestCase</span>(
+                input=tc.question,
+                actual_output=<span class="kw">await</span> self.<span class="fn">query</span>(model, tc),
+                expected_output=tc.golden_answer,
+                context=tc.context
+            ) <span class="kw">for</span> tc <span class="kw">in</span> test_cases]
+            results[model] = <span class="fn">evaluate</span>(cases, self.metrics)
+        <span class="kw">return</span> self.<span class="fn">compare</span>(results)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 9 -->
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#09</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Multi-Modal RAG for Enterprise Knowledge Base</h3>
+        <p>A multimodal RAG system that ingests PDFs, images, tables, and code repositories into a unified knowledge graph. Uses ColPali for visual document retrieval, graph-based reasoning for cross-document connections, and generates answers with visual citations.</p>
+        <div class="arch-diagram">
+          <span class="node">[PDFs + Images + Code]</span> <span class="arrow">&rarr;</span> <span class="node">[Multi-Modal Embedder]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Knowledge Graph]</span> <span class="arrow">&rarr;</span> <span class="node">[Graph + Vector Retrieval]</span> <span class="arrow">&rarr;</span> <span class="node">[Answer + Visual Citations]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">ColPali</span><span class="tech-tag">Neo4j</span>
+          <span class="tech-tag">LlamaIndex</span><span class="tech-tag">Qdrant</span>
+          <span class="tech-tag">Unstructured.io</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">rag/multimodal_pipeline.py</span></div>
+          <div class="code-body"><span class="kw">from</span> llama_index.core <span class="kw">import</span> KnowledgeGraphIndex
+<span class="kw">from</span> llama_index.embeddings <span class="kw">import</span> ColPaliEmbedding
+<span class="kw">from</span> llama_index.graph_stores <span class="kw">import</span> Neo4jGraphStore
+
+<span class="kw">class</span> <span class="cls">MultiModalRAG</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.graph_store = <span class="cls">Neo4jGraphStore</span>(
+            url=<span class="str">"bolt://localhost:7687"</span>
+        )
+        self.embed_model = <span class="cls">ColPaliEmbedding</span>()
+        self.kg_index = <span class="cls">KnowledgeGraphIndex</span>(
+            graph_store=self.graph_store,
+            embed_model=self.embed_model
+        )
+
+    <span class="kw">async def</span> <span class="fn">ingest</span>(self, docs: list[<span class="cls">MultiModalDoc</span>]):
+        <span class="kw">for</span> doc <span class="kw">in</span> docs:
+            nodes = self.<span class="fn">extract_entities</span>(doc)
+            relations = self.<span class="fn">extract_relations</span>(nodes)
+            self.kg_index.<span class="fn">insert</span>(nodes, relations)
+
+    <span class="kw">async def</span> <span class="fn">query</span>(self, q, top_k=<span class="dec">10</span>):
+        graph_ctx = self.kg_index.<span class="fn">as_retriever</span>().<span class="fn">retrieve</span>(q)
+        <span class="kw">return</span> self.<span class="fn">generate_with_citations</span>(q, graph_ctx)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <!-- PROJECT 10 -->
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#10</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Autonomous Coding Agent with Planning & Execution</h3>
+        <p>An AI coding agent inspired by SWE-bench that takes a GitHub issue, plans a solution using chain-of-thought reasoning, navigates the codebase, writes code with tests, and submits a pull request. Uses a plan-act-observe loop with tool calling for file operations and terminal commands.</p>
+        <div class="arch-diagram">
+          <span class="node">[GitHub Issue]</span> <span class="arrow">&rarr;</span> <span class="node">[Planner Agent]</span> <span class="arrow">&rarr;</span> <span class="node">[Code Navigator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Code Writer]</span> <span class="arrow">&rarr;</span> <span class="node">[Test Runner]</span> <span class="arrow">&rarr;</span> <span class="node">[PR Submitter]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">OpenAI Agents SDK</span><span class="tech-tag">Tree-sitter</span>
+          <span class="tech-tag">GitHub API</span><span class="tech-tag">Docker</span>
+          <span class="tech-tag">Python AST</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">coding_agent/agent.py</span></div>
+          <div class="code-body"><span class="kw">from</span> agents <span class="kw">import</span> Agent, Runner
+<span class="kw">from</span> agents.tool <span class="kw">import</span> function_tool
+
+<span class="dec">@function_tool</span>
+<span class="kw">def</span> <span class="fn">read_file</span>(path: <span class="cls">str</span>) -> <span class="cls">str</span>:
+    <span class="str">"""Read a file from the repository."""</span>
+    <span class="kw">return</span> <span class="fn">open</span>(path).<span class="fn">read</span>()
+
+<span class="dec">@function_tool</span>
+<span class="kw">def</span> <span class="fn">write_file</span>(path: <span class="cls">str</span>, content: <span class="cls">str</span>):
+    <span class="str">"""Write code to a file."""</span>
+    <span class="fn">open</span>(path, <span class="str">"w"</span>).<span class="fn">write</span>(content)
+
+coding_agent = <span class="cls">Agent</span>(
+    name=<span class="str">"SWE-Agent"</span>,
+    instructions=<span class="str">"""You are an expert software engineer.
+    1. Analyze the issue and plan your approach
+    2. Navigate the codebase to understand context
+    3. Implement the fix with proper tests
+    4. Verify all tests pass before submitting"""</span>,
+    tools=[read_file, write_file, run_tests, search_code,
+           git_diff, submit_pr],
+    model=<span class="str">"gpt-4o"</span>
+)
+result = <span class="cls">Runner</span>.<span class="fn">run_sync</span>(coding_agent, issue_text)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+  </div><!-- /projects-grid -->
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+<div class="container">
+  <div class="section-header reveal">
+    <div class="section-tag">Connect</div>
+    <h2>Let's Build Together</h2>
+    <p>Open to AI engineering roles, collaborations, and interesting projects</p>
+  </div>
+  <div class="contact-grid">
+    <a href="mailto:manikanta.pudoka.ai@gmail.com" class="contact-card reveal">
+      <div class="contact-icon">&#9993;</div>
+      <h4>Email</h4>
+      <p>manikanta.pudoka.ai@gmail.com</p>
+    </a>
+    <a href="https://github.com/alpha-agentic-ai-model" target="_blank" class="contact-card reveal">
+      <div class="contact-icon">&#128187;</div>
+      <h4>GitHub</h4>
+      <p>github.com/alpha-agentic-ai-model</p>
+    </a>
+    <a href="https://linkedin.com/in/manikanta-pudoka" target="_blank" class="contact-card reveal">
+      <div class="contact-icon">&#128100;</div>
+      <h4>LinkedIn</h4>
+      <p>linkedin.com/in/manikanta-pudoka</p>
+    </a>
+    <a href="#" class="contact-card reveal">
+      <div class="contact-icon">&#128196;</div>
+      <h4>Resume</h4>
+      <p>Download CV</p>
+    </a>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 MANIKANTA PUDOKA. Engineered with AI.</p>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Filter
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.project-card').forEach(card => {
+      if(filter === 'all' || card.dataset.category === filter) {
+        card.style.display = '';
+        card.style.animation = 'fadeInUp .5s ease';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>
