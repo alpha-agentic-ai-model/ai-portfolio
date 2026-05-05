@@ -11,7 +11,7 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 ## Projects
 
 | # | Project | Category | Technologies |
-|---|---------|----------|-------------|
+|---|---------|----------|--------------|
 | 01 | Multi-Agent Research & Report Generator | Agentic AI | LangGraph, GPT-4o, Tavily |
 | 02 | Agentic RAG with Hybrid Search | RAG | LlamaIndex, ChromaDB, Cohere |
 | 03 | MCP-Powered AI DevOps Agent | Agentic AI | MCP Protocol, Claude 4 |
@@ -26,6 +26,7 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 ## Contact
 
 - Email: manikanta.pudoka.ai@gmail.com
+- LinkedIn: [pudoka-manikanta](https://www.linkedin.com/in/pudoka-manikanta-3477a11b1/)
 - GitHub: [alpha-agentic-ai-model](https://github.com/alpha-agentic-ai-model)
 
 ---
