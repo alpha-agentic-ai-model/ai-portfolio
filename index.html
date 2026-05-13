@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">10</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">16</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -284,7 +284,7 @@ footer p{font-size:.85rem;color:var(--text3)}
     <p>Production-grade AI systems built with cutting-edge frameworks</p>
   </div>
 
-  <div class="day-badge reveal">Day <span>1</span> &mdash; May 5, 2026</div>
+  <div class="day-badge reveal">Day <span>9</span> &mdash; May 13, 2026</div>
 
   <div class="filter-bar reveal">
     <button class="filter-btn active" data-filter="all">All</button>
@@ -796,6 +796,350 @@ coding_agent = <span class="cls">Agent</span>(
     model=<span class="str">"gpt-4o"</span>
 )
 result = <span class="cls">Runner</span>.<span class="fn">run_sync</span>(coding_agent, issue_text)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#11</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>A2A Protocol Agent Marketplace &amp; Discovery Service</h3>
+        <p>A decentralized agent marketplace built on Google&rsquo;s Agent-to-Agent (A2A) protocol that enables autonomous agent discovery, capability negotiation, and task delegation across organizational boundaries. Features agent card publishing, skill-based routing, and multi-turn collaboration with built-in trust scoring.</p>
+        <div class="arch-diagram">
+          <span class="node">[Agent Registry]</span> <span class="arrow">&rarr;</span> <span class="node">[A2A Discovery]</span> <span class="arrow">&rarr;</span> <span class="node">[Capability Matcher]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Task Router]</span> <span class="arrow">&rarr;</span> <span class="node">[Agent Negotiator]</span> <span class="arrow">&rarr;</span> <span class="node">[Collaboration Session]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">A2A Protocol</span><span class="tech-tag">FastAPI</span>
+          <span class="tech-tag">Redis</span><span class="tech-tag">Claude API</span>
+          <span class="tech-tag">PostgreSQL</span><span class="tech-tag">Docker</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">a2a/marketplace.py</span></div>
+          <div class="code-body"><span class="kw">from</span> a2a.server <span class="kw">import</span> A2AServer, AgentCard
+<span class="kw">from</span> a2a.types <span class="kw">import</span> TaskRequest, TaskResponse, Skill
+
+<span class="kw">class</span> <span class="cls">AgentMarketplace</span>:
+    <span class="str">"""A2A-compliant agent marketplace with discovery."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, registry_url: <span class="cls">str</span>):
+        self.registry = <span class="cls">AgentRegistry</span>(registry_url)
+        self.trust_scorer = <span class="cls">TrustEngine</span>()
+        self.router = <span class="cls">SkillRouter</span>()
+
+    <span class="kw">async def</span> <span class="fn">discover_agents</span>(self, required_skills: list[<span class="cls">Skill</span>]):
+        candidates = <span class="kw">await</span> self.registry.<span class="fn">search</span>(
+            skills=required_skills,
+            min_trust_score=0.85
+        )
+        ranked = self.trust_scorer.<span class="fn">rank</span>(candidates)
+        <span class="kw">return</span> ranked[:5]
+
+    <span class="kw">async def</span> <span class="fn">delegate_task</span>(self, task: <span class="cls">TaskRequest</span>):
+        agent = <span class="kw">await</span> self.<span class="fn">discover_agents</span>(task.required_skills)
+        session = <span class="kw">await</span> agent[0].<span class="fn">negotiate</span>(task)
+        result = <span class="kw">await</span> session.<span class="fn">execute</span>(
+            timeout=300, callback=self.<span class="fn">on_progress</span>
+        )
+        self.trust_scorer.<span class="fn">update</span>(agent[0], result)
+        <span class="kw">return</span> result</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#12</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Privacy-Preserving Federated RAG with Differential Privacy</h3>
+        <p>A federated retrieval-augmented generation system that enables multi-organization knowledge sharing without exposing raw documents. Uses differential privacy for embedding perturbation, secure aggregation for cross-silo retrieval, and homomorphic encryption for query processing over encrypted indexes.</p>
+        <div class="arch-diagram">
+          <span class="node">[Org A Docs]</span> <span class="arrow">&rarr;</span> <span class="node">[Local Embedder + DP Noise]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Secure Aggregator]</span> <span class="arrow">&rarr;</span> <span class="node">[Encrypted Index]</span> <span class="arrow">&rarr;</span> <span class="node">[Private Query Engine]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PySyft</span><span class="tech-tag">FAISS</span>
+          <span class="tech-tag">OpenDP</span><span class="tech-tag">FastAPI</span>
+          <span class="tech-tag">Claude API</span><span class="tech-tag">TenSEAL</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">federated_rag/private_retriever.py</span></div>
+          <div class="code-body"><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> opendp.measurements <span class="kw">import</span> make_base_laplace
+<span class="kw">from</span> pysyft <span class="kw">import</span> SecureAggregator
+
+<span class="kw">class</span> <span class="cls">FederatedRAG</span>:
+    <span class="str">"""Privacy-preserving RAG across organizational silos."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, epsilon: <span class="cls">float</span> = 1.0):
+        self.dp_mechanism = <span class="fn">make_base_laplace</span>(scale=1.0/epsilon)
+        self.aggregator = <span class="cls">SecureAggregator</span>()
+        self.local_indexes = {}
+
+    <span class="kw">def</span> <span class="fn">add_private_embeddings</span>(self, org_id: <span class="cls">str</span>, embeddings):
+        <span class="cm"># Add calibrated Laplace noise for DP guarantee</span>
+        noisy = embeddings + self.dp_mechanism(embeddings.shape)
+        self.local_indexes[org_id] = <span class="cls">FAISSIndex</span>(noisy)
+
+    <span class="kw">async def</span> <span class="fn">federated_retrieve</span>(self, query_emb, top_k=10):
+        partial_results = []
+        <span class="kw">for</span> org_id, idx <span class="kw">in</span> self.local_indexes.<span class="fn">items</span>():
+            hits = idx.<span class="fn">search</span>(query_emb, k=top_k)
+            partial_results.<span class="fn">append</span>(hits)
+        merged = self.aggregator.<span class="fn">secure_merge</span>(
+            partial_results, strategy=<span class="str">"rank_fusion"</span>
+        )
+        <span class="kw">return</span> merged[:top_k]</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#13</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>Intelligent LLM Router with Cost-Aware Cascade</h3>
+        <p>A smart routing layer that classifies incoming prompts by complexity, routes them to the optimal model (Haiku/Sonnet/Opus or GPT-4o-mini/GPT-4o), and implements cascade fallback with automatic retry on quality failures. Reduces API costs by 65% while maintaining output quality through learned routing policies.</p>
+        <div class="arch-diagram">
+          <span class="node">[Prompt]</span> <span class="arrow">&rarr;</span> <span class="node">[Complexity Classifier]</span> <span class="arrow">&rarr;</span> <span class="node">[Model Selector]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Primary Model]</span> <span class="arrow">&rarr;</span> <span class="node">[Quality Gate]</span> <span class="arrow">&rarr;</span> <span class="node">[Cascade / Return]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">OpenAI API</span>
+          <span class="tech-tag">scikit-learn</span><span class="tech-tag">Redis</span>
+          <span class="tech-tag">Prometheus</span><span class="tech-tag">FastAPI</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">router/llm_cascade.py</span></div>
+          <div class="code-body"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> GradientBoostingClassifier
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">RouteDecision</span>:
+    model: <span class="cls">str</span>
+    estimated_cost: <span class="cls">float</span>
+    confidence: <span class="cls">float</span>
+    fallback_chain: list[<span class="cls">str</span>]
+
+<span class="kw">class</span> <span class="cls">LLMRouter</span>:
+    MODELS = {
+        <span class="str">"simple"</span>: <span class="str">"claude-haiku-4-5"</span>,
+        <span class="str">"moderate"</span>: <span class="str">"claude-sonnet-4-6"</span>,
+        <span class="str">"complex"</span>: <span class="str">"claude-opus-4-6"</span>,
+    }
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.classifier = <span class="cls">GradientBoostingClassifier</span>()
+        self.cost_tracker = <span class="cls">CostMonitor</span>()
+
+    <span class="kw">async def</span> <span class="fn">route</span>(self, prompt: <span class="cls">str</span>) -> <span class="cls">RouteDecision</span>:
+        features = self.<span class="fn">extract_features</span>(prompt)
+        complexity = self.classifier.<span class="fn">predict</span>([features])[0]
+        model = self.MODELS[complexity]
+        <span class="kw">return</span> <span class="cls">RouteDecision</span>(
+            model=model,
+            estimated_cost=self.cost_tracker.<span class="fn">estimate</span>(model, prompt),
+            confidence=self.classifier.<span class="fn">predict_proba</span>([features]).<span class="fn">max</span>(),
+            fallback_chain=self.<span class="fn">build_cascade</span>(complexity)
+        )</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#14</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>GPU Cluster Orchestrator with Spot Instance Optimization</h3>
+        <p>An intelligent GPU cluster manager that orchestrates distributed training jobs across mixed spot and on-demand instances. Features automatic checkpointing, preemption-aware scheduling, cost optimization with up to 70% savings, and seamless fault recovery with gradient state preservation.</p>
+        <div class="arch-diagram">
+          <span class="node">[Training Job]</span> <span class="arrow">&rarr;</span> <span class="node">[Spot Bid Manager]</span> <span class="arrow">&rarr;</span> <span class="node">[GPU Allocator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Checkpoint Manager]</span> <span class="arrow">&rarr;</span> <span class="node">[Fault Recovery]</span> <span class="arrow">&rarr;</span> <span class="node">[Cost Dashboard]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Ray</span><span class="tech-tag">Kubernetes</span>
+          <span class="tech-tag">PyTorch DDP</span><span class="tech-tag">AWS EC2</span>
+          <span class="tech-tag">Terraform</span><span class="tech-tag">Grafana</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">orchestrator/gpu_scheduler.py</span></div>
+          <div class="code-body"><span class="kw">import</span> ray
+<span class="kw">from</span> ray.train <span class="kw">import</span> ScalingConfig, CheckpointConfig
+<span class="kw">from</span> ray.train.torch <span class="kw">import</span> TorchTrainer
+
+<span class="kw">class</span> <span class="cls">GPUOrchestrator</span>:
+    <span class="str">"""Spot-aware GPU cluster orchestrator."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cluster_config: <span class="cls">dict</span>):
+        ray.<span class="fn">init</span>(address=cluster_config[<span class="str">"head_node"</span>])
+        self.spot_manager = <span class="cls">SpotBidOptimizer</span>(
+            max_price=cluster_config[<span class="str">"max_bid"</span>],
+            regions=cluster_config[<span class="str">"regions"</span>]
+        )
+
+    <span class="kw">def</span> <span class="fn">launch_training</span>(self, train_fn, num_gpus: <span class="cls">int</span>):
+        scaling = <span class="cls">ScalingConfig</span>(
+            num_workers=num_gpus,
+            use_gpu=<span class="kw">True</span>,
+            resources_per_worker={<span class="str">"GPU"</span>: 1}
+        )
+        trainer = <span class="cls">TorchTrainer</span>(
+            train_loop_per_worker=train_fn,
+            scaling_config=scaling,
+            run_config=ray.train.<span class="cls">RunConfig</span>(
+                checkpoint_config=<span class="cls">CheckpointConfig</span>(
+                    num_to_keep=3,
+                    checkpoint_frequency=100
+                ),
+                failure_config=ray.train.<span class="cls">FailureConfig</span>(
+                    max_failures=5  <span class="cm"># auto-recover from spot loss</span>
+                )
+            )
+        )
+        <span class="kw">return</span> trainer.<span class="fn">fit</span>()</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#15</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Real-Time Voice Agent with Streaming Speech-to-Speech</h3>
+        <p>A low-latency voice AI agent that uses streaming ASR, real-time LLM inference, and neural TTS to create natural conversational experiences. Features voice activity detection, interruption handling, emotional tone adaptation, and sub-500ms end-to-end latency through pipeline parallelism.</p>
+        <div class="arch-diagram">
+          <span class="node">[Microphone]</span> <span class="arrow">&rarr;</span> <span class="node">[Streaming ASR]</span> <span class="arrow">&rarr;</span> <span class="node">[LLM (streaming)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Neural TTS]</span> <span class="arrow">&rarr;</span> <span class="node">[VAD + Interruption Handler]</span> <span class="arrow">&rarr;</span> <span class="node">[Speaker]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Whisper V3</span><span class="tech-tag">Claude API</span>
+          <span class="tech-tag">Coqui TTS</span><span class="tech-tag">WebSocket</span>
+          <span class="tech-tag">PyAudio</span><span class="tech-tag">asyncio</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">voice_agent/streaming_pipeline.py</span></div>
+          <div class="code-body"><span class="kw">import</span> asyncio
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">VoiceConfig</span>:
+    sample_rate: <span class="cls">int</span> = 16000
+    vad_threshold: <span class="cls">float</span> = 0.5
+    max_latency_ms: <span class="cls">int</span> = 500
+
+<span class="kw">class</span> <span class="cls">StreamingVoiceAgent</span>:
+    <span class="str">"""Sub-500ms voice-to-voice conversational agent."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, config: <span class="cls">VoiceConfig</span>):
+        self.asr = <span class="cls">StreamingWhisper</span>(config.sample_rate)
+        self.llm = <span class="cls">StreamingLLM</span>(model=<span class="str">"claude-sonnet-4-6"</span>)
+        self.tts = <span class="cls">NeuralTTS</span>(voice=<span class="str">"conversational"</span>)
+        self.vad = <span class="cls">VoiceActivityDetector</span>(config.vad_threshold)
+
+    <span class="kw">async def</span> <span class="fn">process_stream</span>(self, audio_chunks):
+        <span class="kw">async for</span> chunk <span class="kw">in</span> audio_chunks:
+            <span class="kw">if</span> self.vad.<span class="fn">is_interruption</span>(chunk):
+                <span class="kw">await</span> self.tts.<span class="fn">stop</span>()
+            transcript = <span class="kw">await</span> self.asr.<span class="fn">transcribe</span>(chunk)
+            <span class="kw">if</span> transcript.is_final:
+                <span class="kw">async for</span> token <span class="kw">in</span> self.llm.<span class="fn">stream</span>(transcript.text):
+                    audio = <span class="kw">await</span> self.tts.<span class="fn">synthesize</span>(token)
+                    <span class="kw">yield</span> audio</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#16</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>MCP Tool Forge: Dynamic Tool Generation &amp; Registry</h3>
+        <p>An autonomous system that generates, tests, and deploys MCP tool servers on-the-fly from natural language specifications. Includes a tool registry with versioning, automated integration testing, sandboxed execution, and usage analytics. Enables non-developers to extend AI agent capabilities through conversational tool creation.</p>
+        <div class="arch-diagram">
+          <span class="node">[NL Tool Spec]</span> <span class="arrow">&rarr;</span> <span class="node">[Code Generator]</span> <span class="arrow">&rarr;</span> <span class="node">[Test Harness]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[MCP Registry]</span> <span class="arrow">&rarr;</span> <span class="node">[Sandbox Deploy]</span> <span class="arrow">&rarr;</span> <span class="node">[Agent Integration]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MCP SDK</span><span class="tech-tag">Claude API</span>
+          <span class="tech-tag">Docker</span><span class="tech-tag">TypeScript</span>
+          <span class="tech-tag">Vitest</span><span class="tech-tag">SQLite</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">tool_forge/generator.ts</span></div>
+          <div class="code-body"><span class="kw">import</span> { McpServer } <span class="kw">from</span> <span class="str">"@modelcontextprotocol/sdk/server"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">interface</span> <span class="cls">ToolSpec</span> {
+  name: <span class="cls">string</span>;
+  description: <span class="cls">string</span>;
+  parameters: Record&lt;<span class="cls">string</span>, <span class="cls">string</span>&gt;;
+  logic: <span class="cls">string</span>;
+}
+
+<span class="kw">class</span> <span class="cls">ToolForge</span> {
+  <span class="kw">private</span> registry = <span class="kw">new</span> <span class="cls">Map</span>&lt;<span class="cls">string</span>, McpServer&gt;();
+
+  <span class="kw">async</span> <span class="fn">generateTool</span>(spec: <span class="cls">ToolSpec</span>): Promise&lt;McpServer&gt; {
+    <span class="kw">const</span> server = <span class="kw">new</span> <span class="cls">McpServer</span>({
+      name: spec.name,
+      version: <span class="str">"1.0.0"</span>,
+    });
+
+    <span class="kw">const</span> schema = this.<span class="fn">buildZodSchema</span>(spec.parameters);
+    server.<span class="fn">tool</span>(spec.name, schema, <span class="kw">async</span> (args) =&gt; {
+      <span class="kw">const</span> result = <span class="kw">await</span> this.<span class="fn">sandboxExec</span>(spec.logic, args);
+      <span class="kw">return</span> { content: [{ type: <span class="str">"text"</span>, text: result }] };
+    });
+
+    <span class="kw">await</span> this.<span class="fn">runTests</span>(server, spec);
+    this.registry.<span class="fn">set</span>(spec.name, server);
+    <span class="kw">return</span> server;
+  }
+}</div>
         </div>
       </div>
       <div class="project-footer">

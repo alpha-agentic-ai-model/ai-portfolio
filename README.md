@@ -22,6 +22,12 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 | 08 | LLM Eval & Red-Teaming Framework | LLM | DeepEval, LangSmith |
 | 09 | Multi-Modal RAG Knowledge Base | RAG | ColPali, Neo4j, LlamaIndex |
 | 10 | Autonomous Coding Agent | Agentic AI | OpenAI Agents SDK, Tree-sitter |
+| 11 | A2A Protocol Agent Marketplace | Agentic AI | A2A Protocol, FastAPI, Redis |
+| 12 | Privacy-Preserving Federated RAG | RAG | PySyft, FAISS, OpenDP, TenSEAL |
+| 13 | Intelligent LLM Router with Cascade | LLM | Claude API, scikit-learn, Redis |
+| 14 | GPU Cluster Orchestrator | MLOps | Ray, Kubernetes, PyTorch DDP |
+| 15 | Real-Time Voice Agent | Deep Learning | Whisper V3, Coqui TTS, WebSocket |
+| 16 | MCP Tool Forge | Agentic AI | MCP SDK, Claude API, Docker |
 
 ## Contact
 
@@ -30,4 +36,4 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 - GitHub: [alpha-agentic-ai-model](https://github.com/alpha-agentic-ai-model)
 
 ---
-*Updated daily with new AI projects.*
+*Updated daily with new AI projects. Day 9 — May 13, 2026*
