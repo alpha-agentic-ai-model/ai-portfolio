@@ -28,6 +28,12 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 | 14 | GPU Cluster Orchestrator | MLOps | Ray, Kubernetes, PyTorch DDP |
 | 15 | Real-Time Voice Agent | Deep Learning | Whisper V3, Coqui TTS, WebSocket |
 | 16 | MCP Tool Forge | Agentic AI | MCP SDK, Claude API, Docker |
+| 17 | LLM Observability & Trace Analytics Platform | MLOps | OpenTelemetry, Langfuse, ClickHouse |
+| 18 | AWS Strands Agent Orchestrator | Agentic AI | Strands Agents SDK, AWS Bedrock |
+| 19 | GraphRAG Knowledge Graph Reasoning Engine | RAG | Neo4j, LangChain, Claude API |
+| 20 | Agentic Workflow Engine with Human-in-the-Loop | Agentic AI | LangGraph, Temporal.io, Claude API |
+| 21 | Diffusion Model Fine-Tuning (DreamBooth + LoRA) | Deep Learning | Diffusers, PyTorch, PEFT |
+| 22 | MCP Secure Data Gateway with Policy Access | LLM | MCP SDK, Open Policy Agent, Presidio |
 
 ## Contact
 
@@ -36,4 +42,4 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 - GitHub: [alpha-agentic-ai-model](https://github.com/alpha-agentic-ai-model)
 
 ---
-*Updated daily with new AI projects. Day 9 — May 13, 2026*
+*Updated daily with new AI projects. Day 10 — May 14, 2026*

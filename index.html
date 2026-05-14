@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">16</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">22</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -284,7 +284,7 @@ footer p{font-size:.85rem;color:var(--text3)}
     <p>Production-grade AI systems built with cutting-edge frameworks</p>
   </div>
 
-  <div class="day-badge reveal">Day <span>9</span> &mdash; May 13, 2026</div>
+  <div class="day-badge reveal">Day <span>10</span> &mdash; May 14, 2026</div>
 
   <div class="filter-bar reveal">
     <button class="filter-btn active" data-filter="all">All</button>
@@ -1140,6 +1140,407 @@ result = <span class="cls">Runner</span>.<span class="fn">run_sync</span>(coding
     <span class="kw">return</span> server;
   }
 }</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#17</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>LLM Observability &amp; Trace Analytics Platform</h3>
+        <p>A production-grade LLM observability platform that captures distributed traces across multi-model pipelines, tracks token usage, latency percentiles, and cost attribution per request. Features real-time anomaly detection on hallucination rates, automatic prompt regression alerts, and a Grafana-integrated dashboard for team-wide visibility.</p>
+        <div class="arch-diagram">
+          <span class="node">[LLM App]</span> <span class="arrow">&rarr;</span> <span class="node">[Trace Collector]</span> <span class="arrow">&rarr;</span> <span class="node">[Span Processor]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Metrics Store]</span> <span class="arrow">&rarr;</span> <span class="node">[Anomaly Detector]</span> <span class="arrow">&rarr;</span> <span class="node">[Alert Manager]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Grafana Dashboard]</span> <span class="arrow">&larr;</span> <span class="node">[Query Engine]</span> <span class="arrow">&larr;</span> <span class="node">[Cost Tracker]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">OpenTelemetry</span><span class="tech-tag">Langfuse</span>
+          <span class="tech-tag">ClickHouse</span><span class="tech-tag">Grafana</span>
+          <span class="tech-tag">FastAPI</span><span class="tech-tag">Prometheus</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">observability/trace_collector.py</span></div>
+          <div class="code-body"><span class="kw">from</span> opentelemetry <span class="kw">import</span> trace
+<span class="kw">from</span> opentelemetry.sdk.trace <span class="kw">import</span> TracerProvider
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">import</span> time
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">LLMSpan</span>:
+    model: <span class="cls">str</span>
+    prompt_tokens: <span class="cls">int</span> = <span class="cls">0</span>
+    completion_tokens: <span class="cls">int</span> = <span class="cls">0</span>
+    latency_ms: <span class="cls">float</span> = <span class="cls">0.0</span>
+    cost_usd: <span class="cls">float</span> = <span class="cls">0.0</span>
+    hallucination_score: <span class="cls">float</span> = <span class="cls">0.0</span>
+
+<span class="kw">class</span> <span class="cls">LLMTraceCollector</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, service_name: <span class="cls">str</span>):
+        self.provider = <span class="cls">TracerProvider</span>()
+        self.tracer = self.provider.<span class="fn">get_tracer</span>(service_name)
+        self.cost_map = {<span class="str">"claude-sonnet-4-6"</span>: <span class="cls">0.003</span>,
+                         <span class="str">"claude-haiku-4-5"</span>: <span class="cls">0.00025</span>}
+
+    <span class="kw">def</span> <span class="fn">trace_llm_call</span>(self, model, prompt, response):
+        <span class="kw">with</span> self.tracer.<span class="fn">start_as_current_span</span>(<span class="str">"llm_call"</span>) <span class="kw">as</span> span:
+            start = time.<span class="fn">perf_counter</span>()
+            span.<span class="fn">set_attribute</span>(<span class="str">"llm.model"</span>, model)
+            span.<span class="fn">set_attribute</span>(<span class="str">"llm.tokens.prompt"</span>, prompt.token_count)
+            cost = prompt.token_count * self.cost_map.<span class="fn">get</span>(model, <span class="cls">0.001</span>)
+            span.<span class="fn">set_attribute</span>(<span class="str">"llm.cost_usd"</span>, cost)
+            self.anomaly_detector.<span class="fn">check</span>(span)
+            <span class="kw">return</span> <span class="cls">LLMSpan</span>(model=model, cost_usd=cost,
+                latency_ms=(time.<span class="fn">perf_counter</span>() - start) * <span class="cls">1000</span>)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#18</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>AWS Strands Agent Orchestrator with Dynamic Task Routing</h3>
+        <p>A multi-agent orchestration framework built on the AWS Strands Agents SDK that dynamically routes tasks to specialized sub-agents based on intent classification. Features native Bedrock model integration, tool-use chains with retry logic, shared memory across agent teams, and automatic load balancing with agent health monitoring.</p>
+        <div class="arch-diagram">
+          <span class="node">[User Request]</span> <span class="arrow">&rarr;</span> <span class="node">[Intent Classifier]</span> <span class="arrow">&rarr;</span> <span class="node">[Agent Router]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Research Agent]</span> <span class="arrow">|</span> <span class="node">[Code Agent]</span> <span class="arrow">|</span> <span class="node">[Data Agent]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Shared Memory]</span> <span class="arrow">&rarr;</span> <span class="node">[Result Aggregator]</span> <span class="arrow">&rarr;</span> <span class="node">[Response]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Strands Agents SDK</span><span class="tech-tag">AWS Bedrock</span>
+          <span class="tech-tag">Claude API</span><span class="tech-tag">DynamoDB</span>
+          <span class="tech-tag">Python</span><span class="tech-tag">asyncio</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">agents/strands_orchestrator.py</span></div>
+          <div class="code-body"><span class="kw">from</span> strands <span class="kw">import</span> Agent
+<span class="kw">from</span> strands.models.bedrock <span class="kw">import</span> BedrockModel
+<span class="kw">from</span> strands <span class="kw">import</span> tool
+<span class="kw">from</span> typing <span class="kw">import</span> Any
+
+<span class="dec">@tool</span>
+<span class="kw">def</span> <span class="fn">search_knowledge_base</span>(query: <span class="cls">str</span>) -&gt; <span class="cls">str</span>:
+    <span class="str">&quot;Search the internal knowledge base for context.&quot;</span>
+    results = vector_store.<span class="fn">similarity_search</span>(query, k=<span class="cls">5</span>)
+    <span class="kw">return</span> <span class="str">&quot;\n&quot;</span>.<span class="fn">join</span>(r.content <span class="kw">for</span> r <span class="kw">in</span> results)
+
+<span class="kw">class</span> <span class="cls">StrandsOrchestrator</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.model = <span class="cls">BedrockModel</span>(
+            model_id=<span class="str">&quot;us.anthropic.claude-sonnet-4-6-v1:0&quot;</span>,
+            region_name=<span class="str">&quot;us-east-1&quot;</span>
+        )
+        self.research_agent = <span class="cls">Agent</span>(
+            model=self.model,
+            system_prompt=<span class="str">&quot;You are a research specialist.&quot;</span>,
+            tools=[search_knowledge_base, web_search]
+        )
+        self.code_agent = <span class="cls">Agent</span>(
+            model=self.model,
+            system_prompt=<span class="str">&quot;You are a code expert.&quot;</span>,
+            tools=[run_code, analyze_repo]
+        )
+
+    <span class="kw">async def</span> <span class="fn">route_and_execute</span>(self, request: <span class="cls">str</span>):
+        intent = <span class="kw">await</span> self.<span class="fn">classify_intent</span>(request)
+        agent = self.agents[intent]
+        result = agent(request)
+        <span class="kw">return</span> result.message</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#19</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>GraphRAG: Knowledge Graph Reasoning Engine</h3>
+        <p>A graph-based retrieval-augmented generation system that builds a knowledge graph from unstructured documents using entity extraction and relation linking, then performs multi-hop reasoning over the graph to answer complex queries that require synthesizing information across multiple documents and relationships.</p>
+        <div class="arch-diagram">
+          <span class="node">[Documents]</span> <span class="arrow">&rarr;</span> <span class="node">[Entity Extractor]</span> <span class="arrow">&rarr;</span> <span class="node">[Relation Linker]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Knowledge Graph (Neo4j)]</span> <span class="arrow">&rarr;</span> <span class="node">[Multi-Hop Traversal]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Context Assembler]</span> <span class="arrow">&rarr;</span> <span class="node">[LLM Reasoner]</span> <span class="arrow">&rarr;</span> <span class="node">[Cited Answer]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Neo4j</span><span class="tech-tag">LangChain</span>
+          <span class="tech-tag">Claude API</span><span class="tech-tag">spaCy</span>
+          <span class="tech-tag">FastAPI</span><span class="tech-tag">NetworkX</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">graphrag/reasoning_engine.py</span></div>
+          <div class="code-body"><span class="kw">from</span> neo4j <span class="kw">import</span> GraphDatabase
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">Entity</span>:
+    name: <span class="cls">str</span>
+    entity_type: <span class="cls">str</span>
+    properties: <span class="cls">dict</span>
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">Relation</span>:
+    source: <span class="cls">Entity</span>
+    target: <span class="cls">Entity</span>
+    relation_type: <span class="cls">str</span>
+    confidence: <span class="cls">float</span>
+
+<span class="kw">class</span> <span class="cls">GraphRAGEngine</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, neo4j_uri: <span class="cls">str</span>, llm):
+        self.driver = <span class="cls">GraphDatabase</span>.<span class="fn">driver</span>(neo4j_uri)
+        self.llm = llm
+        self.extractor = <span class="cls">EntityExtractor</span>(llm)
+
+    <span class="kw">async def</span> <span class="fn">ingest_document</span>(self, doc: <span class="cls">str</span>):
+        entities = <span class="kw">await</span> self.extractor.<span class="fn">extract</span>(doc)
+        relations = <span class="kw">await</span> self.extractor.<span class="fn">link_relations</span>(entities)
+        <span class="kw">with</span> self.driver.<span class="fn">session</span>() <span class="kw">as</span> session:
+            <span class="kw">for</span> entity <span class="kw">in</span> entities:
+                session.<span class="fn">run</span>(<span class="str">&quot;MERGE (e:Entity {name: $name})&quot;</span>,
+                    name=entity.name)
+            <span class="kw">for</span> rel <span class="kw">in</span> relations:
+                session.<span class="fn">run</span>(
+                    <span class="str">&quot;MATCH (a:Entity {name: $src}), (b:Entity {name: $tgt}) &quot;</span>
+                    <span class="str">&quot;MERGE (a)-[r:RELATES {type: $rel}]-&gt;(b)&quot;</span>,
+                    src=rel.source.name, tgt=rel.target.name,
+                    rel=rel.relation_type)
+
+    <span class="kw">async def</span> <span class="fn">multi_hop_query</span>(self, question: <span class="cls">str</span>, hops=<span class="cls">3</span>):
+        seed = <span class="kw">await</span> self.<span class="fn">extract_query_entities</span>(question)
+        paths = self.<span class="fn">traverse</span>(seed, max_hops=hops)
+        context = self.<span class="fn">assemble_context</span>(paths)
+        <span class="kw">return await</span> self.llm.<span class="fn">reason</span>(question, context)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#20</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Agentic Workflow Engine with Human-in-the-Loop</h3>
+        <p>An enterprise workflow automation engine where AI agents plan, execute, and monitor multi-step business processes with built-in human approval gates. Features DAG-based workflow definition, parallel branch execution, automatic error recovery with checkpoint rollback, and a real-time audit trail for compliance-sensitive operations.</p>
+        <div class="arch-diagram">
+          <span class="node">[Workflow DSL]</span> <span class="arrow">&rarr;</span> <span class="node">[DAG Compiler]</span> <span class="arrow">&rarr;</span> <span class="node">[Execution Engine]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Agent Step]</span> <span class="arrow">&rarr;</span> <span class="node">[Human Gate]</span> <span class="arrow">&rarr;</span> <span class="node">[Parallel Branch]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Checkpoint Store]</span> <span class="arrow">&rarr;</span> <span class="node">[Recovery Manager]</span> <span class="arrow">&rarr;</span> <span class="node">[Audit Log]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">LangGraph</span><span class="tech-tag">Temporal.io</span>
+          <span class="tech-tag">Claude API</span><span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">Redis</span><span class="tech-tag">FastAPI</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">workflows/engine.py</span></div>
+          <div class="code-body"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+<span class="kw">from</span> typing <span class="kw">import</span> Callable, Any
+
+<span class="kw">class</span> <span class="cls">StepStatus</span>(<span class="cls">Enum</span>):
+    PENDING = <span class="str">&quot;pending&quot;</span>
+    RUNNING = <span class="str">&quot;running&quot;</span>
+    AWAITING_APPROVAL = <span class="str">&quot;awaiting_approval&quot;</span>
+    COMPLETED = <span class="str">&quot;completed&quot;</span>
+    FAILED = <span class="str">&quot;failed&quot;</span>
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">WorkflowStep</span>:
+    name: <span class="cls">str</span>
+    agent_fn: <span class="cls">Callable</span>
+    requires_approval: <span class="cls">bool</span> = <span class="cls">False</span>
+    retry_limit: <span class="cls">int</span> = <span class="cls">3</span>
+    depends_on: list[<span class="cls">str</span>] = field(default_factory=<span class="cls">list</span>)
+
+<span class="kw">class</span> <span class="cls">WorkflowEngine</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, checkpoint_store):
+        self.steps: dict[<span class="cls">str</span>, <span class="cls">WorkflowStep</span>] = {}
+        self.checkpoints = checkpoint_store
+        self.audit_log = <span class="cls">AuditLogger</span>()
+
+    <span class="kw">def</span> <span class="fn">add_step</span>(self, step: <span class="cls">WorkflowStep</span>):
+        self.steps[step.name] = step
+
+    <span class="kw">async def</span> <span class="fn">execute</span>(self, workflow_id: <span class="cls">str</span>, context: <span class="cls">dict</span>):
+        dag = self.<span class="fn">compile_dag</span>()
+        <span class="kw">for</span> batch <span class="kw">in</span> self.<span class="fn">topological_batches</span>(dag):
+            tasks = [self.<span class="fn">run_step</span>(s, context) <span class="kw">for</span> s <span class="kw">in</span> batch]
+            results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tasks)
+            self.checkpoints.<span class="fn">save</span>(workflow_id, results)
+            self.audit_log.<span class="fn">record</span>(workflow_id, batch, results)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#21</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Diffusion Model Fine-Tuning with DreamBooth &amp; LoRA</h3>
+        <p>An end-to-end pipeline for fine-tuning Stable Diffusion models using DreamBooth and LoRA adapters on custom image datasets. Supports automated dataset curation, prior-preservation training, hyperparameter sweeps via Weights &amp; Biases, and one-click deployment to a Gradio inference endpoint with A/B model comparison.</p>
+        <div class="arch-diagram">
+          <span class="node">[Image Dataset]</span> <span class="arrow">&rarr;</span> <span class="node">[Auto Captioner]</span> <span class="arrow">&rarr;</span> <span class="node">[Data Augmenter]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[DreamBooth + LoRA Trainer]</span> <span class="arrow">&rarr;</span> <span class="node">[W&amp;B Sweep]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Model Registry]</span> <span class="arrow">&rarr;</span> <span class="node">[Gradio Endpoint]</span> <span class="arrow">&rarr;</span> <span class="node">[A/B Compare]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Diffusers</span><span class="tech-tag">PyTorch</span>
+          <span class="tech-tag">LoRA / PEFT</span><span class="tech-tag">Weights &amp; Biases</span>
+          <span class="tech-tag">Gradio</span><span class="tech-tag">CUDA</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">diffusion/dreambooth_trainer.py</span></div>
+          <div class="code-body"><span class="kw">import</span> torch
+<span class="kw">from</span> diffusers <span class="kw">import</span> StableDiffusionPipeline, DDPMScheduler
+<span class="kw">from</span> peft <span class="kw">import</span> LoraConfig, get_peft_model
+<span class="kw">import</span> wandb
+
+<span class="kw">class</span> <span class="cls">DreamBoothLoRATrainer</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, model_id: <span class="cls">str</span>, instance_prompt: <span class="cls">str</span>):
+        self.pipe = <span class="cls">StableDiffusionPipeline</span>.<span class="fn">from_pretrained</span>(
+            model_id, torch_dtype=torch.float16
+        ).<span class="fn">to</span>(<span class="str">&quot;cuda&quot;</span>)
+        self.lora_config = <span class="cls">LoraConfig</span>(
+            r=<span class="cls">16</span>, lora_alpha=<span class="cls">32</span>,
+            target_modules=[<span class="str">&quot;to_q&quot;</span>, <span class="str">&quot;to_v&quot;</span>, <span class="str">&quot;to_k&quot;</span>, <span class="str">&quot;to_out.0&quot;</span>],
+            lora_dropout=<span class="cls">0.05</span>,
+        )
+        self.instance_prompt = instance_prompt
+
+    <span class="kw">def</span> <span class="fn">prepare_model</span>(self):
+        self.pipe.unet = <span class="fn">get_peft_model</span>(
+            self.pipe.unet, self.lora_config
+        )
+        trainable = sum(p.<span class="fn">numel</span>() <span class="kw">for</span> p <span class="kw">in</span>
+            self.pipe.unet.<span class="fn">parameters</span>() <span class="kw">if</span> p.requires_grad)
+        <span class="fn">print</span>(<span class="str">f&quot;Trainable params: {trainable:,}&quot;</span>)
+
+    <span class="kw">def</span> <span class="fn">train</span>(self, dataset, epochs=<span class="cls">100</span>, lr=<span class="cls">1e-4</span>):
+        wandb.<span class="fn">init</span>(project=<span class="str">&quot;dreambooth-lora&quot;</span>)
+        optimizer = torch.optim.<span class="cls">AdamW</span>(
+            self.pipe.unet.<span class="fn">parameters</span>(), lr=lr
+        )
+        scheduler = <span class="cls">DDPMScheduler</span>.<span class="fn">from_pretrained</span>(
+            self.pipe.scheduler.config
+        )
+        <span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(epochs):
+            <span class="kw">for</span> batch <span class="kw">in</span> dataset:
+                noise = torch.<span class="fn">randn_like</span>(batch.latents)
+                loss = self.<span class="fn">compute_loss</span>(batch, noise, scheduler)
+                loss.<span class="fn">backward</span>()
+                optimizer.<span class="fn">step</span>()
+                wandb.<span class="fn">log</span>({<span class="str">&quot;loss&quot;</span>: loss.item()})</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#22</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>MCP Secure Data Gateway with Policy-Based Access</h3>
+        <p>A Model Context Protocol gateway that provides AI agents with secure, policy-controlled access to enterprise databases, APIs, and file systems. Features OPA-based access policies, automatic PII redaction, query audit logging, rate limiting per agent identity, and data lineage tracking to ensure compliance-grade data access for LLM-powered applications.</p>
+        <div class="arch-diagram">
+          <span class="node">[Agent Request]</span> <span class="arrow">&rarr;</span> <span class="node">[Auth &amp; Identity]</span> <span class="arrow">&rarr;</span> <span class="node">[Policy Engine (OPA)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[PII Redactor]</span> <span class="arrow">&rarr;</span> <span class="node">[Data Source Router]</span> <span class="arrow">&rarr;</span> <span class="node">[DB / API / Files]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Audit Logger]</span> <span class="arrow">&rarr;</span> <span class="node">[Rate Limiter]</span> <span class="arrow">&rarr;</span> <span class="node">[Lineage Tracker]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MCP SDK</span><span class="tech-tag">Open Policy Agent</span>
+          <span class="tech-tag">FastAPI</span><span class="tech-tag">SQLAlchemy</span>
+          <span class="tech-tag">Presidio</span><span class="tech-tag">Redis</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">gateway/mcp_data_gateway.py</span></div>
+          <div class="code-body"><span class="kw">from</span> mcp.server.fastmcp <span class="kw">import</span> FastMCP
+<span class="kw">from</span> presidio_analyzer <span class="kw">import</span> AnalyzerEngine
+<span class="kw">from</span> presidio_anonymizer <span class="kw">import</span> AnonymizerEngine
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+mcp = <span class="cls">FastMCP</span>(<span class="str">&quot;secure-data-gateway&quot;</span>)
+analyzer = <span class="cls">AnalyzerEngine</span>()
+anonymizer = <span class="cls">AnonymizerEngine</span>()
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">AccessPolicy</span>:
+    agent_id: <span class="cls">str</span>
+    allowed_tables: list[<span class="cls">str</span>]
+    max_rows: <span class="cls">int</span> = <span class="cls">1000</span>
+    redact_pii: <span class="cls">bool</span> = <span class="cls">True</span>
+    rate_limit_rpm: <span class="cls">int</span> = <span class="cls">60</span>
+
+<span class="kw">class</span> <span class="cls">PolicyEngine</span>:
+    <span class="kw">def</span> <span class="fn">evaluate</span>(self, agent_id: <span class="cls">str</span>, resource: <span class="cls">str</span>) -&gt; <span class="cls">AccessPolicy</span>:
+        policy = self.opa_client.<span class="fn">query</span>(
+            <span class="str">&quot;data.gateway.allow&quot;</span>,
+            {<span class="str">&quot;agent&quot;</span>: agent_id, <span class="str">&quot;resource&quot;</span>: resource}
+        )
+        <span class="kw">return</span> <span class="cls">AccessPolicy</span>(**policy)
+
+<span class="dec">@mcp.tool()</span>
+<span class="kw">async def</span> <span class="fn">query_database</span>(sql: <span class="cls">str</span>, agent_id: <span class="cls">str</span>) -&gt; <span class="cls">str</span>:
+    <span class="str">&quot;Execute a read-only query with policy enforcement.&quot;</span>
+    policy = engine.<span class="fn">evaluate</span>(agent_id, extract_tables(sql))
+    <span class="kw">if not</span> policy:
+        <span class="kw">raise</span> <span class="cls">PermissionError</span>(<span class="str">&quot;Access denied by policy&quot;</span>)
+    result = <span class="kw">await</span> db.<span class="fn">execute_readonly</span>(sql, max_rows=policy.max_rows)
+    <span class="kw">if</span> policy.redact_pii:
+        result = <span class="fn">redact_pii</span>(result)
+    audit_log.<span class="fn">record</span>(agent_id, sql, result.row_count)
+    <span class="kw">return</span> result.<span class="fn">to_json</span>()
+
+<span class="kw">def</span> <span class="fn">redact_pii</span>(text: <span class="cls">str</span>) -&gt; <span class="cls">str</span>:
+    results = analyzer.<span class="fn">analyze</span>(text=text, language=<span class="str">&quot;en&quot;</span>)
+    <span class="kw">return</span> anonymizer.<span class="fn">anonymize</span>(text=text, analyzer_results=results).text</div>
         </div>
       </div>
       <div class="project-footer">
