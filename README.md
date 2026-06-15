@@ -11,6 +11,12 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 ## Projects
 
 | # | Project | Category | Technologies |
+| #23 | Agent Swarm with Emergent Collective Intelligence | Agentic AI | asyncio, Ray, Claude API, Redis Streams |
+| #24 | Vectorless RAG with Reasoning-Based Retrieval | RAG | Claude API, LlamaIndex, SQLite FTS5, FastAPI |
+| #25 | Adaptive LLM Context Compression Engine | LLM Engineering | Claude API, tiktoken, sentence-transformers, Redis |
+| #26 | Continuous Pre-Training Pipeline for Domain LLMs | Deep Learning | PyTorch, DeepSpeed, HuggingFace, W&B |
+| #27 | Persistent Agent Memory & Episodic Recall System | Agentic AI | Claude API, PostgreSQL, pgvector, LangGraph |
+| #28 | Real-Time Feature Store with Online-Offline Consistency | MLOps | Apache Kafka, Redis, Apache Spark, DuckDB |
 |---|---------|----------|--------------|
 | 01 | Multi-Agent Research & Report Generator | Agentic AI | LangGraph, GPT-4o, Tavily |
 | 02 | Agentic RAG with Hybrid Search | RAG | LlamaIndex, ChromaDB, Cohere |

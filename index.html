@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">22</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">28</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -1541,6 +1541,456 @@ anonymizer = <span class="cls">AnonymizerEngine</span>()
 <span class="kw">def</span> <span class="fn">redact_pii</span>(text: <span class="cls">str</span>) -&gt; <span class="cls">str</span>:
     results = analyzer.<span class="fn">analyze</span>(text=text, language=<span class="str">&quot;en&quot;</span>)
     <span class="kw">return</span> anonymizer.<span class="fn">anonymize</span>(text=text, analyzer_results=results).text</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#23</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Agent Swarm with Emergent Collective Intelligence</h3>
+        <p>A bio-inspired multi-agent swarm framework where lightweight agents communicate through a shared stigmergy memory layer, enabling emergent problem-solving behaviors without centralized orchestration. Features pheromone-based task allocation, swarm consensus protocols, and adaptive specialization where agents evolve roles based on collective performance gradients.</p>
+        <div class="arch-diagram">
+          <span class="node">[Task Pool]</span> <span class="arrow">&rarr;</span> <span class="node">[Swarm Spawner]</span> <span class="arrow">&rarr;</span> <span class="node">[Agent Cluster (N=50+)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Stigmergy Memory]</span> <span class="arrow">&larr;</span> <span class="node">[Pheromone Signals]</span> <span class="arrow">&larr;</span> <span class="node">[Agent Actions]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Consensus Engine]</span> <span class="arrow">&rarr;</span> <span class="node">[Emergent Solution]</span> <span class="arrow">&rarr;</span> <span class="node">[Quality Assessor]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">asyncio</span><span class="tech-tag">Ray</span><span class="tech-tag">Claude API</span><span class="tech-tag">Redis Streams</span><span class="tech-tag">NetworkX</span><span class="tech-tag">FastAPI</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">swarm/collective_intelligence.py</span></div>
+          <div class="code-body"><span class="kw">import</span> asyncio
+<span class="kw">import</span> random
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> typing <span class="kw">import</span> Any
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">Pheromone</span>:
+    task_id: <span class="cls">str</span>
+    intensity: <span class="cls">float</span>
+    deposited_by: <span class="cls">str</span>
+    decay_rate: <span class="cls">float</span> = <span class="cls">0.95</span>
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">SwarmAgent</span>:
+    agent_id: <span class="cls">str</span>
+    role: <span class="cls">str</span> = <span class="str">&quot;generalist&quot;</span>
+    energy: <span class="cls">float</span> = <span class="cls">1.0</span>
+    memory: <span class="cls">list</span> = <span class="fn">field</span>(default_factory=<span class="cls">list</span>)
+
+<span class="kw">class</span> <span class="cls">StigmergyMemory</span>:
+    <span class="cm">&quot;&quot;&quot;Shared memory layer for agent coordination via pheromones.&quot;&quot;&quot;</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, redis_client):
+        self.redis = redis_client
+        self.pheromones: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">list</span>[<span class="cls">Pheromone</span>]] = {}
+
+    <span class="kw">async def</span> <span class="fn">deposit</span>(self, pheromone: <span class="cls">Pheromone</span>):
+        key = <span class="str">f&quot;pheromone:{pheromone.task_id}&quot;</span>
+        <span class="kw">await</span> self.redis.<span class="fn">zadd</span>(key, {pheromone.deposited_by: pheromone.intensity})
+
+<span class="kw">class</span> <span class="cls">AgentSwarm</span>:
+    <span class="cm">&quot;&quot;&quot;Bio-inspired swarm with emergent collective intelligence.&quot;&quot;&quot;</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, num_agents: <span class="cls">int</span> = <span class="cls">50</span>, llm_client=<span class="kw">None</span>):
+        self.agents = [<span class="cls">SwarmAgent</span>(<span class="str">f&quot;agent-{i}&quot;</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(num_agents)]
+        self.stigmergy = <span class="cls">StigmergyMemory</span>(redis_client)
+        self.llm = llm_client
+
+    <span class="kw">async def</span> <span class="fn">solve</span>(self, problem: <span class="cls">str</span>, max_rounds: <span class="cls">int</span> = <span class="cls">10</span>):
+        sub_tasks = <span class="kw">await</span> self.<span class="fn">decompose</span>(problem)
+        <span class="kw">for</span> round_num <span class="kw">in</span> <span class="fn">range</span>(max_rounds):
+            tasks = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*[
+                self.<span class="fn">agent_step</span>(agent, sub_tasks)
+                <span class="kw">for</span> agent <span class="kw">in</span> self.agents])
+            consensus = <span class="kw">await</span> self.<span class="fn">check_consensus</span>(tasks)
+            <span class="kw">if</span> consensus.confidence &gt; <span class="cls">0.85</span>:
+                <span class="kw">return</span> consensus.solution</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#24</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Vectorless RAG with Reasoning-Based Retrieval</h3>
+        <p>A next-generation RAG system that eliminates vector embeddings entirely, replacing approximate nearest-neighbor search with LLM-powered reasoning-based retrieval. Uses structured document summaries, hierarchical chunking with proposition extraction, and an iterative reasoning loop that evaluates relevance through logical inference rather than cosine similarity.</p>
+        <div class="arch-diagram">
+          <span class="node">[Query]</span> <span class="arrow">&rarr;</span> <span class="node">[Proposition Extractor]</span> <span class="arrow">&rarr;</span> <span class="node">[Reasoning Retriever]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Document Summaries]</span> <span class="arrow">&rarr;</span> <span class="node">[Relevance Reasoner]</span> <span class="arrow">&rarr;</span> <span class="node">[Evidence Scorer]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Iterative Refinement]</span> <span class="arrow">&rarr;</span> <span class="node">[Grounded Answer]</span> <span class="arrow">&rarr;</span> <span class="node">[Citation Chain]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">LlamaIndex</span><span class="tech-tag">SQLite FTS5</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Pydantic</span><span class="tech-tag">Python</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">rag/vectorless_retriever.py</span></div>
+          <div class="code-body"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">Proposition</span>:
+    text: <span class="cls">str</span>
+    source_chunk_id: <span class="cls">str</span>
+    confidence: <span class="cls">float</span>
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">RetrievalResult</span>:
+    propositions: <span class="cls">list</span>[<span class="cls">Proposition</span>]
+    reasoning_trace: <span class="cls">str</span>
+    relevance_score: <span class="cls">float</span>
+
+<span class="kw">class</span> <span class="cls">VectorlessRetriever</span>:
+    <span class="cm">&quot;&quot;&quot;Reasoning-based retrieval without vector embeddings.&quot;&quot;&quot;</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, llm, document_store):
+        self.llm = llm
+        self.store = document_store
+        self.fts = <span class="cls">FullTextSearch</span>(document_store)
+
+    <span class="kw">async def</span> <span class="fn">retrieve</span>(self, query: <span class="cls">str</span>, top_k: <span class="cls">int</span> = <span class="cls">10</span>):
+        <span class="cm"># Step 1: BM25 candidate retrieval</span>
+        candidates = self.fts.<span class="fn">search</span>(query, limit=top_k * <span class="cls">5</span>)
+        <span class="cm"># Step 2: Reasoning-based relevance scoring</span>
+        scored = []
+        <span class="kw">for</span> chunk <span class="kw">in</span> candidates:
+            relevance = <span class="kw">await</span> self.<span class="fn">reason_about_relevance</span>(query, chunk)
+            <span class="kw">if</span> relevance.is_relevant:
+                scored.<span class="fn">append</span>((chunk, relevance.score))
+        <span class="cm"># Step 3: Iterative refinement</span>
+        scored.<span class="fn">sort</span>(key=<span class="kw">lambda</span> x: x[<span class="cls">1</span>], reverse=<span class="kw">True</span>)
+        top_chunks = [c <span class="kw">for</span> c, _ <span class="kw">in</span> scored[:top_k]]
+        refined = <span class="kw">await</span> self.<span class="fn">iterative_refine</span>(query, top_chunks)
+        <span class="kw">return</span> <span class="cls">RetrievalResult</span>(
+            propositions=refined,
+            reasoning_trace=self.<span class="fn">build_trace</span>(),
+            relevance_score=self.<span class="fn">aggregate_score</span>(scored))</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#25</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>Adaptive LLM Context Compression Engine</h3>
+        <p>A production middleware layer that dynamically compresses LLM context windows using extractive summarization, semantic deduplication, and importance-weighted token pruning. Reduces token usage by 40-60% while preserving task-critical information, with automatic compression ratio tuning based on real-time quality feedback loops.</p>
+        <div class="arch-diagram">
+          <span class="node">[Input Context]</span> <span class="arrow">&rarr;</span> <span class="node">[Importance Scorer]</span> <span class="arrow">&rarr;</span> <span class="node">[Semantic Deduplicator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Extractive Compressor]</span> <span class="arrow">&rarr;</span> <span class="node">[Token Pruner]</span> <span class="arrow">&rarr;</span> <span class="node">[Compressed Context]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Quality Monitor]</span> <span class="arrow">&rarr;</span> <span class="node">[Ratio Tuner]</span> <span class="arrow">&rarr;</span> <span class="node">[Feedback Loop]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">tiktoken</span><span class="tech-tag">sentence-transformers</span><span class="tech-tag">Redis</span><span class="tech-tag">FastAPI</span><span class="tech-tag">NumPy</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">compression/context_engine.py</span></div>
+          <div class="code-body"><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">CompressionResult</span>:
+    compressed_text: <span class="cls">str</span>
+    original_tokens: <span class="cls">int</span>
+    compressed_tokens: <span class="cls">int</span>
+    compression_ratio: <span class="cls">float</span>
+    quality_score: <span class="cls">float</span>
+
+<span class="kw">class</span> <span class="cls">ContextCompressionEngine</span>:
+    <span class="cm">&quot;&quot;&quot;Adaptive context compression with quality feedback.&quot;&quot;&quot;</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, target_ratio: <span class="cls">float</span> = <span class="cls">0.5</span>):
+        self.encoder = <span class="cls">SentenceTransformer</span>(<span class="str">&quot;all-MiniLM-L6-v2&quot;</span>)
+        self.target_ratio = target_ratio
+        self.quality_history: <span class="cls">list</span>[<span class="cls">float</span>] = []
+
+    <span class="kw">def</span> <span class="fn">score_importance</span>(self, sentences, query):
+        query_emb = self.encoder.<span class="fn">encode</span>([query])
+        sent_embs = self.encoder.<span class="fn">encode</span>(sentences)
+        similarities = np.<span class="fn">dot</span>(sent_embs, query_emb.T).<span class="fn">flatten</span>()
+        position_weights = np.<span class="fn">linspace</span>(<span class="cls">1.0</span>, <span class="cls">0.7</span>, <span class="fn">len</span>(sentences))
+        <span class="kw">return</span> similarities * position_weights
+
+    <span class="kw">def</span> <span class="fn">deduplicate</span>(self, sentences, threshold=<span class="cls">0.92</span>):
+        embeddings = self.encoder.<span class="fn">encode</span>(sentences)
+        keep = [<span class="cls">0</span>]
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="cls">1</span>, <span class="fn">len</span>(sentences)):
+            sims = np.<span class="fn">dot</span>(embeddings[i], embeddings[keep].T)
+            <span class="kw">if</span> sims.<span class="fn">max</span>() &lt; threshold:
+                keep.<span class="fn">append</span>(i)
+        <span class="kw">return</span> [sentences[i] <span class="kw">for</span> i <span class="kw">in</span> keep]
+
+    <span class="kw">def</span> <span class="fn">compress</span>(self, context, query):
+        sentences = self.<span class="fn">split_sentences</span>(context)
+        deduped = self.<span class="fn">deduplicate</span>(sentences)
+        scores = self.<span class="fn">score_importance</span>(deduped, query)
+        budget = <span class="fn">int</span>(<span class="fn">len</span>(deduped) * self.<span class="fn">adaptive_ratio</span>())
+        top_idx = np.<span class="fn">argsort</span>(scores)[-budget:]
+        <span class="kw">return</span> <span class="cls">CompressionResult</span>(
+            compressed_text=<span class="str">&quot; &quot;</span>.<span class="fn">join</span>(deduped[i] <span class="kw">for</span> i <span class="kw">in</span> top_idx),
+            original_tokens=self.<span class="fn">count_tokens</span>(context),
+            compressed_tokens=self.<span class="fn">count_tokens</span>(compressed),
+            compression_ratio=<span class="fn">len</span>(compressed) / <span class="fn">len</span>(context),
+            quality_score=self.<span class="fn">estimate_quality</span>(scores, top_idx))</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#26</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Continuous Pre-Training Pipeline for Domain LLMs</h3>
+        <p>An end-to-end pipeline for continuously pre-training open-source LLMs on domain-specific corpora (legal, medical, financial). Features curriculum learning with data mixing strategies, catastrophic forgetting mitigation through elastic weight consolidation, automated data quality filtering, and distributed training with DeepSpeed ZeRO-3 optimization.</p>
+        <div class="arch-diagram">
+          <span class="node">[Domain Corpus]</span> <span class="arrow">&rarr;</span> <span class="node">[Data Quality Filter]</span> <span class="arrow">&rarr;</span> <span class="node">[Curriculum Scheduler]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[DeepSpeed ZeRO-3 Trainer]</span> <span class="arrow">&rarr;</span> <span class="node">[EWC Regularizer]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Eval Harness]</span> <span class="arrow">&rarr;</span> <span class="node">[Domain Benchmark]</span> <span class="arrow">&rarr;</span> <span class="node">[Model Registry]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">DeepSpeed</span><span class="tech-tag">HuggingFace</span><span class="tech-tag">Weights &amp; Biases</span><span class="tech-tag">datasets</span><span class="tech-tag">CUDA</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">pretraining/continual_trainer.py</span></div>
+          <div class="code-body"><span class="kw">import</span> torch
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoModelForCausalLM, AutoTokenizer
+<span class="kw">from</span> deepspeed <span class="kw">import</span> DeepSpeedConfig
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">CurriculumStage</span>:
+    name: <span class="cls">str</span>
+    dataset_path: <span class="cls">str</span>
+    mix_ratio: <span class="cls">float</span>
+    epochs: <span class="cls">int</span>
+    learning_rate: <span class="cls">float</span>
+
+<span class="kw">class</span> <span class="cls">ContinualPreTrainer</span>:
+    <span class="cm">&quot;&quot;&quot;Continuous pre-training with catastrophic forgetting mitigation.&quot;&quot;&quot;</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, base_model: <span class="cls">str</span>, domain: <span class="cls">str</span>):
+        self.model = <span class="cls">AutoModelForCausalLM</span>.<span class="fn">from_pretrained</span>(
+            base_model, torch_dtype=torch.bfloat16)
+        self.tokenizer = <span class="cls">AutoTokenizer</span>.<span class="fn">from_pretrained</span>(base_model)
+        self.domain = domain
+        self.fisher_matrices = {}
+
+    <span class="kw">def</span> <span class="fn">compute_fisher</span>(self, dataloader, num_samples=<span class="cls">1000</span>):
+        <span class="cm">&quot;&quot;&quot;Compute Fisher Information Matrix for EWC.&quot;&quot;&quot;</span>
+        fisher = {n: torch.<span class="fn">zeros_like</span>(p)
+                  <span class="kw">for</span> n, p <span class="kw">in</span> self.model.<span class="fn">named_parameters</span>()}
+        self.model.<span class="fn">eval</span>()
+        <span class="kw">for</span> i, batch <span class="kw">in</span> <span class="fn">enumerate</span>(dataloader):
+            <span class="kw">if</span> i &gt;= num_samples: <span class="kw">break</span>
+            output = self.<span class="fn">model</span>(**batch)
+            loss = output.loss
+            loss.<span class="fn">backward</span>()
+            <span class="kw">for</span> n, p <span class="kw">in</span> self.model.<span class="fn">named_parameters</span>():
+                <span class="kw">if</span> p.grad <span class="kw">is not None</span>:
+                    fisher[n] += p.grad.data ** <span class="cls">2</span>
+
+    <span class="kw">def</span> <span class="fn">ewc_loss</span>(self, ewc_lambda=<span class="cls">5000.0</span>):
+        <span class="cm">&quot;&quot;&quot;Elastic Weight Consolidation penalty.&quot;&quot;&quot;</span>
+        loss = <span class="cls">0.0</span>
+        <span class="kw">for</span> domain, fisher <span class="kw">in</span> self.fisher_matrices.<span class="fn">items</span>():
+            <span class="kw">for</span> n, p <span class="kw">in</span> self.model.<span class="fn">named_parameters</span>():
+                ref = self.reference_params[n]
+                loss += (fisher[n] * (p - ref) ** <span class="cls">2</span>).<span class="fn">sum</span>()
+        <span class="kw">return</span> ewc_lambda * loss</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#27</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Persistent Agent Memory &amp; Episodic Recall System</h3>
+        <p>A sophisticated memory management system for AI agents that implements hierarchical memory (working, episodic, semantic, procedural) with time-weighted decay, importance scoring, and associative recall. Enables agents to maintain long-term context across sessions, learn from past interactions, and build persistent knowledge that improves decision-making over time.</p>
+        <div class="arch-diagram">
+          <span class="node">[Agent Action]</span> <span class="arrow">&rarr;</span> <span class="node">[Memory Encoder]</span> <span class="arrow">&rarr;</span> <span class="node">[Importance Scorer]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Working Memory]</span> <span class="arrow">&rarr;</span> <span class="node">[Episodic Store]</span> <span class="arrow">&rarr;</span> <span class="node">[Semantic Consolidator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Associative Retrieval]</span> <span class="arrow">&rarr;</span> <span class="node">[Temporal Decay]</span> <span class="arrow">&rarr;</span> <span class="node">[Memory Replay]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">pgvector</span><span class="tech-tag">LangGraph</span><span class="tech-tag">Redis</span><span class="tech-tag">Python</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">memory/episodic_memory.py</span></div>
+          <div class="code-body"><span class="kw">import</span> time
+<span class="kw">import</span> math
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="kw">class</span> <span class="cls">MemoryType</span>(<span class="cls">Enum</span>):
+    WORKING = <span class="str">&quot;working&quot;</span>
+    EPISODIC = <span class="str">&quot;episodic&quot;</span>
+    SEMANTIC = <span class="str">&quot;semantic&quot;</span>
+    PROCEDURAL = <span class="str">&quot;procedural&quot;</span>
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">MemoryEntry</span>:
+    content: <span class="cls">str</span>
+    memory_type: <span class="cls">MemoryType</span>
+    importance: <span class="cls">float</span>
+    timestamp: <span class="cls">float</span> = <span class="fn">field</span>(default_factory=time.time)
+    access_count: <span class="cls">int</span> = <span class="cls">0</span>
+
+<span class="kw">class</span> <span class="cls">AgentMemorySystem</span>:
+    <span class="cm">&quot;&quot;&quot;Hierarchical memory with temporal decay and associative recall.&quot;&quot;&quot;</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, db, embedding_model, decay_rate=<span class="cls">0.995</span>):
+        self.db = db
+        self.embedder = embedding_model
+        self.decay_rate = decay_rate
+        self.working_memory: <span class="cls">list</span>[<span class="cls">MemoryEntry</span>] = []
+
+    <span class="kw">def</span> <span class="fn">compute_retrieval_score</span>(self, memory, query_emb):
+        age_hours = (time.<span class="fn">time</span>() - memory.timestamp) / <span class="cls">3600</span>
+        recency = math.<span class="fn">pow</span>(self.decay_rate, age_hours)
+        relevance = self.<span class="fn">cosine_sim</span>(memory.embedding, query_emb)
+        frequency = math.<span class="fn">log</span>(<span class="cls">1</span> + memory.access_count)
+        <span class="kw">return</span> (<span class="cls">0.4</span> * relevance + <span class="cls">0.3</span> * recency +
+                <span class="cls">0.2</span> * memory.importance + <span class="cls">0.1</span> * frequency)
+
+    <span class="kw">async def</span> <span class="fn">store</span>(self, content, mem_type):
+        embedding = <span class="kw">await</span> self.embedder.<span class="fn">encode</span>(content)
+        importance = <span class="kw">await</span> self.<span class="fn">score_importance</span>(content)
+        entry = <span class="cls">MemoryEntry</span>(
+            content=content, memory_type=mem_type,
+            importance=importance, embedding=embedding)
+        <span class="kw">if</span> mem_type == <span class="cls">MemoryType</span>.WORKING:
+            self.working_memory.<span class="fn">append</span>(entry)
+            <span class="kw">if</span> <span class="fn">len</span>(self.working_memory) &gt; <span class="cls">7</span>:
+                <span class="kw">await</span> self.<span class="fn">consolidate_to_episodic</span>()
+
+    <span class="kw">async def</span> <span class="fn">recall</span>(self, query, top_k=<span class="cls">5</span>):
+        query_emb = <span class="kw">await</span> self.embedder.<span class="fn">encode</span>(query)
+        candidates = <span class="kw">await</span> self.db.<span class="fn">search_similar</span>(query_emb, limit=<span class="cls">50</span>)
+        scored = [(m, self.<span class="fn">compute_retrieval_score</span>(m, query_emb))
+                  <span class="kw">for</span> m <span class="kw">in</span> candidates]
+        scored.<span class="fn">sort</span>(key=<span class="kw">lambda</span> x: x[<span class="cls">1</span>], reverse=<span class="kw">True</span>)
+        <span class="kw">return</span> [m <span class="kw">for</span> m, _ <span class="kw">in</span> scored[:top_k]]</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#28</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>Real-Time Feature Store with Online-Offline Consistency</h3>
+        <p>A production feature store that guarantees consistency between offline training features and online serving features through a unified computation engine. Supports real-time feature transformations with sub-10ms latency, point-in-time correct joins for training data, automated feature drift monitoring, and a self-serve feature catalog with lineage tracking.</p>
+        <div class="arch-diagram">
+          <span class="node">[Event Stream]</span> <span class="arrow">&rarr;</span> <span class="node">[Stream Processor]</span> <span class="arrow">&rarr;</span> <span class="node">[Online Store (Redis)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Batch Processor]</span> <span class="arrow">&rarr;</span> <span class="node">[Offline Store (Parquet)]</span> <span class="arrow">&rarr;</span> <span class="node">[Training Pipeline]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Consistency Checker]</span> <span class="arrow">&rarr;</span> <span class="node">[Drift Monitor]</span> <span class="arrow">&rarr;</span> <span class="node">[Feature Catalog]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Apache Kafka</span><span class="tech-tag">Redis</span><span class="tech-tag">Apache Spark</span><span class="tech-tag">DuckDB</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Prometheus</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">feature_store/realtime_engine.py</span></div>
+          <div class="code-body"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> typing <span class="kw">import</span> Any, Callable
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">import</span> time
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">FeatureDefinition</span>:
+    name: <span class="cls">str</span>
+    entity_key: <span class="cls">str</span>
+    transform_fn: <span class="cls">Callable</span>
+    ttl_seconds: <span class="cls">int</span> = <span class="cls">3600</span>
+    version: <span class="cls">int</span> = <span class="cls">1</span>
+    drift_threshold: <span class="cls">float</span> = <span class="cls">0.1</span>
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">FeatureVector</span>:
+    entity_id: <span class="cls">str</span>
+    features: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">Any</span>]
+    timestamp: <span class="cls">datetime</span>
+    latency_ms: <span class="cls">float</span>
+
+<span class="kw">class</span> <span class="cls">RealtimeFeatureStore</span>:
+    <span class="cm">&quot;&quot;&quot;Feature store with online-offline consistency guarantee.&quot;&quot;&quot;</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, redis_client, offline_store, kafka_consumer):
+        self.redis = redis_client
+        self.offline = offline_store
+        self.consumer = kafka_consumer
+        self.registry: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">FeatureDefinition</span>] = {}
+
+    <span class="kw">def</span> <span class="fn">register_feature</span>(self, feature):
+        self.registry[feature.name] = feature
+
+    <span class="kw">async def</span> <span class="fn">get_online</span>(self, entity_id, features):
+        start = time.<span class="fn">perf_counter</span>()
+        pipe = self.redis.<span class="fn">pipeline</span>()
+        <span class="kw">for</span> feat <span class="kw">in</span> features:
+            pipe.<span class="fn">hget</span>(<span class="str">f&quot;feat:{feat}&quot;</span>, entity_id)
+        values = <span class="kw">await</span> pipe.<span class="fn">execute</span>()
+        result = {feat: self.<span class="fn">deserialize</span>(val)
+                  <span class="kw">for</span> feat, val <span class="kw">in</span> <span class="fn">zip</span>(features, values) <span class="kw">if</span> val}
+        latency = (time.<span class="fn">perf_counter</span>() - start) * <span class="cls">1000</span>
+        <span class="kw">return</span> <span class="cls">FeatureVector</span>(
+            entity_id=entity_id, features=result,
+            timestamp=datetime.<span class="fn">utcnow</span>(), latency_ms=latency)
+
+    <span class="kw">async def</span> <span class="fn">materialize_online</span>(self, feature_name):
+        defn = self.registry[feature_name]
+        <span class="kw">async for</span> event <span class="kw">in</span> self.consumer.<span class="fn">subscribe</span>(defn.entity_key):
+            value = defn.<span class="fn">transform_fn</span>(event)
+            <span class="kw">await</span> self.redis.<span class="fn">hset</span>(
+                <span class="str">f&quot;feat:{feature_name}&quot;</span>, event.entity_id,
+                self.<span class="fn">serialize</span>(value))</div>
         </div>
       </div>
       <div class="project-footer">
