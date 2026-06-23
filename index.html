@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">28</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">34</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -1991,6 +1991,338 @@ anonymizer = <span class="cls">AnonymizerEngine</span>()
             <span class="kw">await</span> self.redis.<span class="fn">hset</span>(
                 <span class="str">f&quot;feat:{feature_name}&quot;</span>, event.entity_id,
                 self.<span class="fn">serialize</span>(value))</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+  
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#29</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>MCP Agent Gateway with Dynamic Tool Discovery</h3>
+        <p>A production gateway that dynamically discovers, authenticates, and routes MCP tool calls across multiple agent runtimes. Implements permission boundaries, audit trails, and compliance logging for enterprise-grade agent deployments with sub-50ms routing latency.</p>
+        <div class="arch-diagram">
+          <span class="node">[Agent Runtime]</span> <span class="arrow">&rarr;</span> <span class="node">[MCP Gateway]</span> <span class="arrow">&rarr;</span> <span class="node">[Tool Registry]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Auth Layer]</span> <span class="arrow">&rarr;</span> <span class="node">[Rate Limiter]</span> <span class="arrow">&rarr;</span> <span class="node">[Tool Executor]</span> <span class="arrow">&rarr;</span> <span class="node">[Audit Log]</span><br>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MCP Protocol</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Redis</span><span class="tech-tag">PostgreSQL</span><span class="tech-tag">Claude SDK</span><span class="tech-tag">Docker</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">gateway/mcp_router.py</span></div>
+          <div class="code-body"><span class="kw">from</span> mcp <span class="kw">import</span> Server, Tool
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Depends
+<span class="kw">import</span> redis.asyncio <span class="kw">as</span> redis
+
+<span class="kw">class</span> <span class="cls">MCPGateway</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, registry_url: <span class="cls">str</span>):
+        self.registry = <span class="cls">ToolRegistry</span>(registry_url)
+        self.auth = <span class="cls">AuthLayer</span>()
+        self.cache = redis.<span class="fn">from_url</span>(<span class="str">"redis://localhost"</span>)
+        self.audit = <span class="cls">AuditLogger</span>(sink=<span class="str">"postgres"</span>)
+
+    <span class="kw">async def</span> <span class="fn">route_tool_call</span>(self, agent_id: <span class="cls">str</span>,
+                              tool_name: <span class="cls">str</span>, params: dict):
+        <span class="cm"># Check permissions and rate limits</span>
+        <span class="kw">await</span> self.auth.<span class="fn">verify_scope</span>(agent_id, tool_name)
+        tool = <span class="kw">await</span> self.registry.<span class="fn">discover</span>(tool_name)
+        <span class="kw">if not</span> tool:
+            <span class="kw">raise</span> <span class="cls">ToolNotFoundError</span>(tool_name)
+
+        result = <span class="kw">await</span> tool.<span class="fn">execute</span>(**params)
+        <span class="kw">await</span> self.audit.<span class="fn">log</span>(agent_id, tool_name,
+                             params, result.status)
+        <span class="kw">return</span> result</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#30</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Multi-Agent Code Review Pipeline</h3>
+        <p>A crew of specialized AI agents that perform comprehensive code reviews: SecurityAgent finds vulnerabilities, PerformanceAgent identifies bottlenecks, StyleAgent enforces conventions, and a SynthesisAgent merges findings into actionable PR comments with confidence scores.</p>
+        <div class="arch-diagram">
+          <span class="node">[PR Diff]</span> <span class="arrow">&rarr;</span> <span class="node">[Dispatcher]</span> <span class="arrow">&rarr;</span> <span class="node">[Security Agent]</span><br>
+            <span class="arrow">&darr;</span>  <br>
+          <span class="node">[Style Agent]</span> <span class="arrow">&rarr;</span> <span class="node">[Perf Agent]</span> <span class="arrow">&rarr;</span> <span class="node">[Synthesis Agent]</span> <span class="arrow">&rarr;</span> <span class="node">[PR Comments]</span><br>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">CrewAI</span><span class="tech-tag">Claude API</span><span class="tech-tag">Tree-sitter</span><span class="tech-tag">GitHub API</span><span class="tech-tag">Python</span><span class="tech-tag">AST</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">agents/review_crew.py</span></div>
+          <div class="code-body"><span class="kw">from</span> crewai <span class="kw">import</span> Agent, Crew, Task
+<span class="kw">from</span> tools <span class="kw">import</span> ASTParser, VulnScanner
+
+security_agent = <span class="cls">Agent</span>(
+    role=<span class="str">"Security Reviewer"</span>,
+    goal=<span class="str">"Find vulnerabilities in code diffs"</span>,
+    tools=[<span class="cls">VulnScanner</span>(), <span class="cls">ASTParser</span>()],
+    llm=<span class="str">"claude-sonnet-4-6"</span>
+)
+
+perf_agent = <span class="cls">Agent</span>(
+    role=<span class="str">"Performance Analyst"</span>,
+    goal=<span class="str">"Identify N+1 queries, memory leaks"</span>,
+    tools=[<span class="cls">ASTParser</span>(), <span class="cls">ComplexityAnalyzer</span>()],
+)
+
+synthesis = <span class="cls">Agent</span>(
+    role=<span class="str">"Review Synthesizer"</span>,
+    goal=<span class="str">"Merge findings into PR comments"</span>,
+)
+
+<span class="kw">def</span> <span class="fn">review_pr</span>(diff: <span class="cls">str</span>) -> list[dict]:
+    crew = <span class="cls">Crew</span>(
+        agents=[security_agent, perf_agent, synthesis],
+        tasks=[
+            <span class="cls">Task</span>(desc=<span class="str">"Scan for CVEs"</span>, agent=security_agent),
+            <span class="cls">Task</span>(desc=<span class="str">"Profile hotspots"</span>, agent=perf_agent),
+            <span class="cls">Task</span>(desc=<span class="str">"Synthesize review"</span>, agent=synthesis),
+        ],
+        verbose=<span class="kw">True</span>
+    )
+    <span class="kw">return</span> crew.<span class="fn">kickoff</span>(inputs={<span class="str">"diff"</span>: diff})</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#31</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Streaming RAG with Real-Time Index Updates</h3>
+        <p>A RAG pipeline that ingests documents via Kafka streams and maintains a real-time vector index with zero-downtime updates. Supports hybrid BM25+dense retrieval with automatic chunk versioning and stale-document eviction for always-fresh knowledge bases.</p>
+        <div class="arch-diagram">
+          <span class="node">[Kafka Stream]</span> <span class="arrow">&rarr;</span> <span class="node">[Chunker]</span> <span class="arrow">&rarr;</span> <span class="node">[Embedder]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Vector DB]</span> <span class="arrow">&larr;</span> <span class="node">[Index Manager]</span> <span class="arrow">&rarr;</span> <span class="node">[BM25 Index]</span> <span class="arrow">&rarr;</span> <span class="node">[Hybrid Retriever]</span><br>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Kafka</span><span class="tech-tag">Qdrant</span><span class="tech-tag">LangChain</span><span class="tech-tag">sentence-transformers</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Python</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">rag/streaming_indexer.py</span></div>
+          <div class="code-body"><span class="kw">from</span> confluent_kafka <span class="kw">import</span> Consumer
+<span class="kw">from</span> qdrant_client <span class="kw">import</span> QdrantClient
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+
+<span class="kw">class</span> <span class="cls">StreamingRAGIndexer</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.embedder = <span class="cls">SentenceTransformer</span>(<span class="str">"all-MiniLM-L6-v2"</span>)
+        self.qdrant = <span class="cls">QdrantClient</span>(url=<span class="str">"localhost:6333"</span>)
+        self.consumer = <span class="cls">Consumer</span>({
+            <span class="str">"bootstrap.servers"</span>: <span class="str">"localhost:9092"</span>,
+            <span class="str">"group.id"</span>: <span class="str">"rag-indexer"</span>,
+        })
+
+    <span class="kw">async def</span> <span class="fn">process_stream</span>(self):
+        self.consumer.<span class="fn">subscribe</span>([<span class="str">"documents"</span>])
+        <span class="kw">while True</span>:
+            msg = self.consumer.<span class="fn">poll</span>(timeout=1.0)
+            <span class="kw">if</span> msg <span class="kw">is None</span>:
+                <span class="kw">continue</span>
+            doc = json.<span class="fn">loads</span>(msg.<span class="fn">value</span>())
+            chunks = self.<span class="fn">chunk_document</span>(doc)
+            vectors = self.embedder.<span class="fn">encode</span>(
+                [c[<span class="str">"text"</span>] <span class="kw">for</span> c <span class="kw">in</span> chunks])
+            <span class="kw">await</span> self.<span class="fn">upsert_vectors</span>(chunks, vectors)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#32</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>LLM Structured Output Validation Engine</h3>
+        <p>A type-safe engine that constrains LLM outputs to match Pydantic schemas with automatic retry, partial-parse recovery, and confidence calibration. Supports streaming structured generation with real-time schema validation for production API endpoints.</p>
+        <div class="arch-diagram">
+          <span class="node">[Prompt + Schema]</span> <span class="arrow">&rarr;</span> <span class="node">[LLM Call]</span> <span class="arrow">&rarr;</span> <span class="node">[Parser]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Validator]</span> <span class="arrow">&rarr;</span> <span class="node">[Retry Logic]</span> <span class="arrow">&rarr;</span> <span class="node">[Confidence Scorer]</span> <span class="arrow">&rarr;</span> <span class="node">[Typed Output]</span><br>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Pydantic</span><span class="tech-tag">Claude API</span><span class="tech-tag">instructor</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Python</span><span class="tech-tag">JSON Schema</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">engine/structured_output.py</span></div>
+          <div class="code-body"><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+<span class="kw">import</span> instructor
+<span class="kw">from</span> anthropic <span class="kw">import</span> Anthropic
+
+client = instructor.<span class="fn">from_anthropic</span>(<span class="cls">Anthropic</span>())
+
+<span class="kw">class</span> <span class="cls">ExtractedEntity</span>(BaseModel):
+    name: <span class="cls">str</span> = Field(description=<span class="str">"Entity name"</span>)
+    category: <span class="cls">str</span> = Field(description=<span class="str">"Entity type"</span>)
+    confidence: <span class="cls">float</span> = Field(ge=0, le=1)
+    relations: list[<span class="cls">str</span>] = Field(default_factory=list)
+
+<span class="kw">class</span> <span class="cls">ExtractionResult</span>(BaseModel):
+    entities: list[<span class="cls">ExtractedEntity</span>]
+    summary: <span class="cls">str</span>
+
+<span class="kw">def</span> <span class="fn">extract_entities</span>(text: <span class="cls">str</span>,
+        max_retries: <span class="cls">int</span> = 3) -> <span class="cls">ExtractionResult</span>:
+    <span class="kw">return</span> client.chat.completions.<span class="fn">create</span>(
+        model=<span class="str">"claude-sonnet-4-6"</span>,
+        max_tokens=2048,
+        max_retries=max_retries,
+        response_model=<span class="cls">ExtractionResult</span>,
+        messages=[{
+            <span class="str">"role"</span>: <span class="str">"user"</span>,
+            <span class="str">"content"</span>: <span class="str">f"Extract entities: {text}"</span>
+        }]
+    )</span></div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#33</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>ML Experiment Drift Detection Platform</h3>
+        <p>An automated platform that monitors production ML models for data drift, concept drift, and performance degradation. Uses statistical tests (PSI, KS, Jensen-Shannon) with adaptive thresholds and triggers automatic retraining pipelines when drift exceeds configured bounds.</p>
+        <div class="arch-diagram">
+          <span class="node">[Prediction Logs]</span> <span class="arrow">&rarr;</span> <span class="node">[Feature Store]</span> <span class="arrow">&rarr;</span> <span class="node">[Drift Analyzer]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Alert Engine]</span> <span class="arrow">&rarr;</span> <span class="node">[Retrain Trigger]</span> <span class="arrow">&rarr;</span> <span class="node">[Model Registry]</span> <span class="arrow">&rarr;</span> <span class="node">[Dashboard]</span><br>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Evidently AI</span><span class="tech-tag">MLflow</span><span class="tech-tag">Prometheus</span><span class="tech-tag">Grafana</span><span class="tech-tag">Python</span><span class="tech-tag">scikit-learn</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">mlops/drift_detector.py</span></div>
+          <div class="code-body"><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">DriftReport</span>:
+    feature: <span class="cls">str</span>
+    psi_score: <span class="cls">float</span>
+    ks_statistic: <span class="cls">float</span>
+    is_drifted: <span class="cls">bool</span>
+    severity: <span class="cls">str</span>
+
+<span class="kw">class</span> <span class="cls">DriftDetector</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, psi_threshold=0.2,
+                 ks_threshold=0.05):
+        self.psi_threshold = psi_threshold
+        self.ks_threshold = ks_threshold
+
+    <span class="kw">def</span> <span class="fn">compute_psi</span>(self, baseline: np.ndarray,
+                    current: np.ndarray) -> <span class="cls">float</span>:
+        <span class="cm"># Population Stability Index</span>
+        bins = np.<span class="fn">histogram_bin_edges</span>(baseline, bins=10)
+        b_pct = np.<span class="fn">histogram</span>(baseline, bins)[0] / len(baseline)
+        c_pct = np.<span class="fn">histogram</span>(current, bins)[0] / len(current)
+        b_pct = np.<span class="fn">clip</span>(b_pct, 1e-6, None)
+        c_pct = np.<span class="fn">clip</span>(c_pct, 1e-6, None)
+        <span class="kw">return</span> np.<span class="fn">sum</span>((c_pct - b_pct) * np.<span class="fn">log</span>(c_pct / b_pct))
+
+    <span class="kw">def</span> <span class="fn">analyze</span>(self, feature: <span class="cls">str</span>,
+                baseline, current) -> <span class="cls">DriftReport</span>:
+        psi = self.<span class="fn">compute_psi</span>(baseline, current)
+        ks_stat, p_val = stats.<span class="fn">ks_2samp</span>(baseline, current)
+        drifted = psi > self.psi_threshold
+        severity = <span class="str">"high"</span> <span class="kw">if</span> psi > 0.5 <span class="kw">else</span> <span class="str">"medium"</span>
+        <span class="kw">return</span> <span class="cls">DriftReport</span>(feature, psi, ks_stat,
+                            drifted, severity)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#34</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Vision Transformer for Medical Image Classification</h3>
+        <p>A fine-tuned Vision Transformer (ViT) for multi-class medical image classification with attention-map explainability. Implements GradCAM visualization, class-balanced sampling for imbalanced datasets, and ONNX export for edge deployment in clinical environments.</p>
+        <div class="arch-diagram">
+          <span class="node">[DICOM Input]</span> <span class="arrow">&rarr;</span> <span class="node">[Preprocessor]</span> <span class="arrow">&rarr;</span> <span class="node">[ViT Encoder]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Attention Maps]</span> <span class="arrow">&rarr;</span> <span class="node">[Classification Head]</span> <span class="arrow">&rarr;</span> <span class="node">[GradCAM]</span> <span class="arrow">&rarr;</span> <span class="node">[Clinical Report]</span><br>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">Hugging Face</span><span class="tech-tag">ONNX</span><span class="tech-tag">GradCAM</span><span class="tech-tag">MONAI</span><span class="tech-tag">timm</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">models/vit_medical.py</span></div>
+          <div class="code-body"><span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">from</span> timm <span class="kw">import</span> create_model
+
+<span class="kw">class</span> <span class="cls">MedicalViT</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, num_classes=5, pretrained=<span class="kw">True</span>):
+        <span class="fn">super</span>().__init__()
+        self.backbone = <span class="fn">create_model</span>(
+            <span class="str">"vit_base_patch16_224"</span>,
+            pretrained=pretrained, num_classes=0
+        )
+        self.classifier = nn.<span class="cls">Sequential</span>(
+            nn.<span class="cls">LayerNorm</span>(768),
+            nn.<span class="cls">Dropout</span>(0.3),
+            nn.<span class="cls">Linear</span>(768, 256),
+            nn.<span class="cls">GELU</span>(),
+            nn.<span class="cls">Linear</span>(256, num_classes)
+        )
+        self.attention_weights = <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        features = self.backbone.<span class="fn">forward_features</span>(x)
+        cls_token = features[:, 0]
+        self.attention_weights = self.backbone.blocks[-1].attn.<span class="fn">get_attention_map</span>()
+        <span class="kw">return</span> self.<span class="fn">classifier</span>(cls_token)
+
+    <span class="kw">def</span> <span class="fn">export_onnx</span>(self, path: <span class="cls">str</span>):
+        dummy = torch.<span class="fn">randn</span>(1, 3, 224, 224)
+        torch.onnx.<span class="fn">export</span>(self, dummy, path,
+            input_names=[<span class="str">"image"</span>],
+            output_names=[<span class="str">"logits"</span>])</div>
         </div>
       </div>
       <div class="project-footer">

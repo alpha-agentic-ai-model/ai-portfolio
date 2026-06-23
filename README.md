@@ -17,6 +17,12 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 | #26 | Continuous Pre-Training Pipeline for Domain LLMs | Deep Learning | PyTorch, DeepSpeed, HuggingFace, W&B |
 | #27 | Persistent Agent Memory & Episodic Recall System | Agentic AI | Claude API, PostgreSQL, pgvector, LangGraph |
 | #28 | Real-Time Feature Store with Online-Offline Consistency | MLOps | Apache Kafka, Redis, Apache Spark, DuckDB |
+| #29 | MCP Agent Gateway with Dynamic Tool Discovery | Agentic AI | MCP Protocol, FastAPI, Redis, PostgreSQL |
+| #30 | Multi-Agent Code Review Pipeline | Agentic AI | CrewAI, Claude API, Tree-sitter, GitHub API |
+| #31 | Streaming RAG with Real-Time Index Updates | RAG | Kafka, Qdrant, LangChain, sentence-transformers |
+| #32 | LLM Structured Output Validation Engine | LLM Engineering | Pydantic, Claude API, instructor, FastAPI |
+| #33 | ML Experiment Drift Detection Platform | MLOps | Evidently AI, MLflow, Prometheus, scikit-learn |
+| #34 | Vision Transformer for Medical Image Classification | Deep Learning | PyTorch, Hugging Face, ONNX, GradCAM |
 |---|---------|----------|--------------|
 | 01 | Multi-Agent Research & Report Generator | Agentic AI | LangGraph, GPT-4o, Tavily |
 | 02 | Agentic RAG with Hybrid Search | RAG | LlamaIndex, ChromaDB, Cohere |
@@ -48,4 +54,4 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 - GitHub: [alpha-agentic-ai-model](https://github.com/alpha-agentic-ai-model)
 
 ---
-*Updated daily with new AI projects. Day 10 — May 14, 2026*
+*Updated daily with new AI projects. Day 50 — June 23, 2026*
