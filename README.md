@@ -11,18 +11,6 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 ## Projects
 
 | # | Project | Category | Technologies |
-| #23 | Agent Swarm with Emergent Collective Intelligence | Agentic AI | asyncio, Ray, Claude API, Redis Streams |
-| #24 | Vectorless RAG with Reasoning-Based Retrieval | RAG | Claude API, LlamaIndex, SQLite FTS5, FastAPI |
-| #25 | Adaptive LLM Context Compression Engine | LLM Engineering | Claude API, tiktoken, sentence-transformers, Redis |
-| #26 | Continuous Pre-Training Pipeline for Domain LLMs | Deep Learning | PyTorch, DeepSpeed, HuggingFace, W&B |
-| #27 | Persistent Agent Memory & Episodic Recall System | Agentic AI | Claude API, PostgreSQL, pgvector, LangGraph |
-| #28 | Real-Time Feature Store with Online-Offline Consistency | MLOps | Apache Kafka, Redis, Apache Spark, DuckDB |
-| #29 | MCP Agent Gateway with Dynamic Tool Discovery | Agentic AI | MCP Protocol, FastAPI, Redis, PostgreSQL |
-| #30 | Multi-Agent Code Review Pipeline | Agentic AI | CrewAI, Claude API, Tree-sitter, GitHub API |
-| #31 | Streaming RAG with Real-Time Index Updates | RAG | Kafka, Qdrant, LangChain, sentence-transformers |
-| #32 | LLM Structured Output Validation Engine | LLM Engineering | Pydantic, Claude API, instructor, FastAPI |
-| #33 | ML Experiment Drift Detection Platform | MLOps | Evidently AI, MLflow, Prometheus, scikit-learn |
-| #34 | Vision Transformer for Medical Image Classification | Deep Learning | PyTorch, Hugging Face, ONNX, GradCAM |
 |---|---------|----------|--------------|
 | 01 | Multi-Agent Research & Report Generator | Agentic AI | LangGraph, GPT-4o, Tavily |
 | 02 | Agentic RAG with Hybrid Search | RAG | LlamaIndex, ChromaDB, Cohere |
@@ -46,6 +34,24 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 | 20 | Agentic Workflow Engine with Human-in-the-Loop | Agentic AI | LangGraph, Temporal.io, Claude API |
 | 21 | Diffusion Model Fine-Tuning (DreamBooth + LoRA) | Deep Learning | Diffusers, PyTorch, PEFT |
 | 22 | MCP Secure Data Gateway with Policy Access | LLM | MCP SDK, Open Policy Agent, Presidio |
+| 23 | Agent Swarm with Emergent Collective Intelligence | Agentic AI | asyncio, Ray, Claude API, Redis Streams |
+| 24 | Vectorless RAG with Reasoning-Based Retrieval | RAG | Claude API, LlamaIndex, SQLite FTS5, FastAPI |
+| 25 | Adaptive LLM Context Compression Engine | LLM Engineering | Claude API, tiktoken, sentence-transformers, Redis |
+| 26 | Continuous Pre-Training Pipeline for Domain LLMs | Deep Learning | PyTorch, DeepSpeed, HuggingFace, W&B |
+| 27 | Persistent Agent Memory & Episodic Recall System | Agentic AI | Claude API, PostgreSQL, pgvector, LangGraph |
+| 28 | Real-Time Feature Store with Online-Offline Consistency | MLOps | Apache Kafka, Redis, Apache Spark, DuckDB |
+| 29 | MCP Agent Gateway with Dynamic Tool Discovery | Agentic AI | MCP Protocol, FastAPI, Redis, PostgreSQL |
+| 30 | Multi-Agent Code Review Pipeline | Agentic AI | CrewAI, Claude API, Tree-sitter, GitHub API |
+| 31 | Streaming RAG with Real-Time Index Updates | RAG | Kafka, Qdrant, LangChain, sentence-transformers |
+| 32 | LLM Structured Output Validation Engine | LLM Engineering | Pydantic, Claude API, instructor, FastAPI |
+| 33 | ML Experiment Drift Detection Platform | MLOps | Evidently AI, MLflow, Prometheus, scikit-learn |
+| 34 | Vision Transformer for Medical Image Classification | Deep Learning | PyTorch, Hugging Face, ONNX, GradCAM |
+| 35 | AI Data Analyst Agent with Automated EDA | Agentic AI | Claude API, Pandas, Matplotlib, SciPy |
+| 36 | Temporal RAG with Time-Aware Knowledge Retrieval | RAG | LlamaIndex, Qdrant, Claude API, dateutil |
+| 37 | LLM API Gateway with Semantic Caching & Fallback | LLM Engineering | FastAPI, Redis, sentence-transformers, Claude API |
+| 38 | Canary Deployment Controller for ML Models | MLOps | Kubernetes, Istio, MLflow, Prometheus |
+| 39 | Mixture of Experts Router with Learned Gating | Deep Learning | PyTorch, DeepSpeed, CUDA, einops |
+| 40 | Multi-Modal Screen Agent with Visual Grounding | Agentic AI | Claude API, PyAutoGUI, Florence-2, Pillow |
 
 ## Contact
 
@@ -54,4 +60,4 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 - GitHub: [alpha-agentic-ai-model](https://github.com/alpha-agentic-ai-model)
 
 ---
-*Updated daily with new AI projects. Day 50 — June 23, 2026*
+*Updated daily with new AI projects. Day 86 — July 29, 2026*

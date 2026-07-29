@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">34</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">40</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -284,7 +284,7 @@ footer p{font-size:.85rem;color:var(--text3)}
     <p>Production-grade AI systems built with cutting-edge frameworks</p>
   </div>
 
-  <div class="day-badge reveal">Day <span>10</span> &mdash; May 14, 2026</div>
+  <div class="day-badge reveal">Day <span>86</span> &mdash; July 29, 2026</div>
 
   <div class="filter-bar reveal">
     <button class="filter-btn active" data-filter="all">All</button>
@@ -2331,6 +2331,457 @@ client = instructor.<span class="fn">from_anthropic</span>(<span class="cls">Ant
       </div>
     </div>
 
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#35</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>AI Data Analyst Agent with Automated EDA</h3>
+        <p>An autonomous data analysis agent that ingests CSV/Parquet datasets, performs automated exploratory data analysis, generates statistical summaries, detects outliers, creates visualizations, and produces narrative insights. Uses a plan-execute loop with tool calling for pandas operations and Matplotlib chart generation.</p>
+        <div class="arch-diagram">
+          <span class="node">[Dataset Upload]</span> <span class="arrow">&rarr;</span> <span class="node">[Schema Detector]</span> <span class="arrow">&rarr;</span> <span class="node">[EDA Planner]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Stats Engine]</span> <span class="arrow">&rarr;</span> <span class="node">[Outlier Detector]</span> <span class="arrow">&rarr;</span> <span class="node">[Chart Generator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Insight Narrator]</span> <span class="arrow">&rarr;</span> <span class="node">[Report Builder]</span> <span class="arrow">&rarr;</span> <span class="node">[Interactive Dashboard]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">Pandas</span><span class="tech-tag">Matplotlib</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Streamlit</span><span class="tech-tag">SciPy</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">agents/data_analyst.py</span></div>
+          <div class="code-body"><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> typing <span class="kw">import</span> Any
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">EDAReport</span>:
+    summary: dict[<span class="cls">str</span>, Any]
+    outliers: list[dict]
+    correlations: pd.DataFrame
+    charts: list[<span class="cls">str</span>]
+    narrative: <span class="cls">str</span>
+
+<span class="kw">class</span> <span class="cls">DataAnalystAgent</span>:
+    <span class="str">"""Autonomous EDA agent with plan-execute loop."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, llm_client):
+        self.llm = llm_client
+        self.tools = [self.describe, self.correlate,
+                      self.detect_outliers, self.plot_distribution]
+
+    <span class="kw">async def</span> <span class="fn">analyze</span>(self, df: pd.DataFrame) -> <span class="cls">EDAReport</span>:
+        plan = <span class="kw">await</span> self.llm.<span class="fn">plan_analysis</span>(
+            schema=df.dtypes.to_dict(),
+            sample=df.head(3).to_dict()
+        )
+        results = {}
+        <span class="kw">for</span> step <span class="kw">in</span> plan.steps:
+            tool = self.<span class="fn">match_tool</span>(step.action)
+            results[step.name] = <span class="kw">await</span> <span class="fn">tool</span>(df, **step.params)
+        narrative = <span class="kw">await</span> self.llm.<span class="fn">narrate</span>(results)
+        <span class="kw">return</span> <span class="cls">EDAReport</span>(**results, narrative=narrative)
+
+    <span class="kw">def</span> <span class="fn">detect_outliers</span>(self, df, columns, method=<span class="str">"iqr"</span>):
+        outliers = []
+        <span class="kw">for</span> col <span class="kw">in</span> columns:
+            q1, q3 = df[col].<span class="fn">quantile</span>([0.25, 0.75])
+            iqr = q3 - q1
+            mask = (df[col] < q1 - 1.5*iqr) | (df[col] > q3 + 1.5*iqr)
+            outliers.extend(df[mask][[col]].to_dict(<span class="str">"records"</span>))
+        <span class="kw">return</span> outliers</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#36</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Temporal RAG with Time-Aware Knowledge Retrieval</h3>
+        <p>A time-sensitive RAG system that indexes documents with temporal metadata, performs decay-weighted retrieval favoring recent information, and resolves temporal conflicts when multiple documents contain contradictory time-bound facts. Supports temporal query understanding and automatic knowledge expiration.</p>
+        <div class="arch-diagram">
+          <span class="node">[Query]</span> <span class="arrow">&rarr;</span> <span class="node">[Temporal Parser]</span> <span class="arrow">&rarr;</span> <span class="node">[Time-Aware Retriever]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Decay Scorer]</span> <span class="arrow">&rarr;</span> <span class="node">[Conflict Resolver]</span> <span class="arrow">&rarr;</span> <span class="node">[Temporal Ranker]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Context Assembler]</span> <span class="arrow">&rarr;</span> <span class="node">[LLM + Time Grounding]</span> <span class="arrow">&rarr;</span> <span class="node">[Dated Answer]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">LlamaIndex</span><span class="tech-tag">Qdrant</span><span class="tech-tag">Claude API</span><span class="tech-tag">dateutil</span><span class="tech-tag">FastAPI</span><span class="tech-tag">Pydantic</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">rag/temporal_retriever.py</span></div>
+          <div class="code-body"><span class="kw">import</span> math
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">TemporalDocument</span>:
+    content: <span class="cls">str</span>
+    created_at: datetime
+    valid_until: datetime | <span class="kw">None</span> = <span class="kw">None</span>
+    source: <span class="cls">str</span> = <span class="str">""</span>
+    relevance: <span class="cls">float</span> = 0.0
+
+<span class="kw">class</span> <span class="cls">TemporalRAG</span>:
+    <span class="str">"""Time-aware RAG with decay scoring and conflict resolution."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vector_store, llm, half_life_days=30):
+        self.store = vector_store
+        self.llm = llm
+        self.half_life = half_life_days
+
+    <span class="kw">def</span> <span class="fn">temporal_score</span>(self, doc: <span class="cls">TemporalDocument</span>,
+                       query_time: datetime) -> <span class="cls">float</span>:
+        age_days = (query_time - doc.created_at).days
+        decay = math.<span class="fn">exp</span>(-0.693 * age_days / self.half_life)
+        <span class="cm"># Penalize expired documents</span>
+        <span class="kw">if</span> doc.valid_until <span class="kw">and</span> query_time > doc.valid_until:
+            decay *= 0.1
+        <span class="kw">return</span> doc.relevance * decay
+
+    <span class="kw">async def</span> <span class="fn">retrieve</span>(self, query, top_k=10):
+        time_ref = <span class="kw">await</span> self.<span class="fn">parse_temporal_intent</span>(query)
+        candidates = <span class="kw">await</span> self.store.<span class="fn">search</span>(query, limit=top_k*3)
+        scored = [(doc, self.<span class="fn">temporal_score</span>(doc, time_ref))
+                  <span class="kw">for</span> doc <span class="kw">in</span> candidates]
+        scored.<span class="fn">sort</span>(key=<span class="kw">lambda</span> x: x[1], reverse=<span class="kw">True</span>)
+        resolved = self.<span class="fn">resolve_conflicts</span>(scored[:top_k])
+        <span class="kw">return</span> resolved
+
+    <span class="kw">def</span> <span class="fn">resolve_conflicts</span>(self, scored_docs):
+        <span class="cm"># Keep most recent when docs contradict</span>
+        seen_topics = {}
+        <span class="kw">for</span> doc, score <span class="kw">in</span> scored_docs:
+            topic = self.<span class="fn">extract_topic</span>(doc)
+            <span class="kw">if</span> topic <span class="kw">not in</span> seen_topics:
+                seen_topics[topic] = (doc, score)
+            <span class="kw">elif</span> doc.created_at > seen_topics[topic][0].created_at:
+                seen_topics[topic] = (doc, score)
+        <span class="kw">return</span> [doc <span class="kw">for</span> doc, _ <span class="kw">in</span> seen_topics.<span class="fn">values</span>()]</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#37</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>LLM API Gateway with Semantic Caching &amp; Fallback</h3>
+        <p>A production API gateway for LLM providers that implements semantic caching using embedding similarity, automatic provider failover with health checks, request deduplication, and cost-aware routing. Reduces API costs by 40% through intelligent cache hits while maintaining 99.9% availability across OpenAI, Anthropic, and Google endpoints.</p>
+        <div class="arch-diagram">
+          <span class="node">[API Request]</span> <span class="arrow">&rarr;</span> <span class="node">[Semantic Cache Check]</span> <span class="arrow">&rarr;</span> <span class="node">[Cache Hit / Miss]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Provider Router]</span> <span class="arrow">&rarr;</span> <span class="node">[Health Monitor]</span> <span class="arrow">&rarr;</span> <span class="node">[Primary / Fallback LLM]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Response Normalizer]</span> <span class="arrow">&rarr;</span> <span class="node">[Cache Writer]</span> <span class="arrow">&rarr;</span> <span class="node">[Cost Tracker]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">FastAPI</span><span class="tech-tag">Redis</span><span class="tech-tag">sentence-transformers</span><span class="tech-tag">Claude API</span><span class="tech-tag">OpenAI</span><span class="tech-tag">Prometheus</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">gateway/llm_gateway.py</span></div>
+          <div class="code-body"><span class="kw">import</span> hashlib, time
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">CacheEntry</span>:
+    prompt_hash: <span class="cls">str</span>
+    embedding: np.ndarray
+    response: <span class="cls">str</span>
+    model: <span class="cls">str</span>
+    created_at: <span class="cls">float</span> = field(default_factory=time.time)
+    hit_count: <span class="cls">int</span> = 0
+
+<span class="kw">class</span> <span class="cls">SemanticCache</span>:
+    <span class="str">"""Embedding-based semantic cache for LLM responses."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, encoder, threshold=0.92):
+        self.encoder = encoder
+        self.threshold = threshold
+        self.entries: list[<span class="cls">CacheEntry</span>] = []
+
+    <span class="kw">async def</span> <span class="fn">lookup</span>(self, prompt: <span class="cls">str</span>):
+        emb = self.encoder.<span class="fn">encode</span>([prompt])[0]
+        <span class="kw">for</span> entry <span class="kw">in</span> self.entries:
+            sim = np.<span class="fn">dot</span>(emb, entry.embedding) / (
+                np.linalg.<span class="fn">norm</span>(emb) * np.linalg.<span class="fn">norm</span>(entry.embedding))
+            <span class="kw">if</span> sim >= self.threshold:
+                entry.hit_count += 1
+                <span class="kw">return</span> entry.response
+        <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="kw">class</span> <span class="cls">LLMGateway</span>:
+    <span class="str">"""Multi-provider LLM gateway with failover."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, providers, cache):
+        self.providers = providers
+        self.cache = cache
+        self.health = {p.name: <span class="kw">True</span> <span class="kw">for</span> p <span class="kw">in</span> providers}
+
+    <span class="kw">async def</span> <span class="fn">complete</span>(self, prompt, model=<span class="kw">None</span>):
+        cached = <span class="kw">await</span> self.cache.<span class="fn">lookup</span>(prompt)
+        <span class="kw">if</span> cached:
+            <span class="kw">return</span> {<span class="str">"response"</span>: cached, <span class="str">"cached"</span>: <span class="kw">True</span>}
+        <span class="kw">for</span> provider <span class="kw">in</span> self.<span class="fn">get_healthy_providers</span>():
+            <span class="kw">try</span>:
+                resp = <span class="kw">await</span> provider.<span class="fn">call</span>(prompt, model)
+                <span class="kw">await</span> self.cache.<span class="fn">store</span>(prompt, resp)
+                <span class="kw">return</span> {<span class="str">"response"</span>: resp, <span class="str">"cached"</span>: <span class="kw">False</span>}
+            <span class="kw">except</span> <span class="cls">Exception</span>:
+                self.health[provider.name] = <span class="kw">False</span>
+        <span class="kw">raise</span> <span class="cls">RuntimeError</span>(<span class="str">"All providers unavailable"</span>)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#38</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>Canary Deployment Controller for ML Models</h3>
+        <p>An intelligent ML model deployment controller that implements canary releases with automatic traffic shifting based on real-time performance metrics. Monitors prediction quality, latency percentiles, and error rates during gradual rollouts, with automatic rollback if the canary model underperforms the baseline by configurable thresholds.</p>
+        <div class="arch-diagram">
+          <span class="node">[New Model]</span> <span class="arrow">&rarr;</span> <span class="node">[Canary Controller]</span> <span class="arrow">&rarr;</span> <span class="node">[Traffic Splitter (5%&rarr;100%)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Baseline Metrics]</span> <span class="arrow">&harr;</span> <span class="node">[Canary Metrics]</span> <span class="arrow">&rarr;</span> <span class="node">[Comparator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Auto-Promote / Rollback]</span> <span class="arrow">&rarr;</span> <span class="node">[Model Registry]</span> <span class="arrow">&rarr;</span> <span class="node">[Alert Manager]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Kubernetes</span><span class="tech-tag">Istio</span><span class="tech-tag">MLflow</span><span class="tech-tag">Prometheus</span><span class="tech-tag">Python</span><span class="tech-tag">FastAPI</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">deploy/canary_controller.py</span></div>
+          <div class="code-body"><span class="kw">import</span> asyncio
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+<span class="kw">class</span> <span class="cls">RolloutPhase</span>(Enum):
+    CANARY_5 = 5
+    CANARY_25 = 25
+    CANARY_50 = 50
+    CANARY_75 = 75
+    FULL = 100
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">CanaryMetrics</span>:
+    accuracy: <span class="cls">float</span>
+    p99_latency_ms: <span class="cls">float</span>
+    error_rate: <span class="cls">float</span>
+    sample_count: <span class="cls">int</span>
+
+<span class="kw">class</span> <span class="cls">CanaryController</span>:
+    <span class="str">"""Automated canary deployment with metric-based promotion."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, model_registry, traffic_mgr,
+                 accuracy_threshold=0.02, latency_threshold=1.2):
+        self.registry = model_registry
+        self.traffic = traffic_mgr
+        self.accuracy_thr = accuracy_threshold
+        self.latency_thr = latency_threshold
+
+    <span class="kw">async def</span> <span class="fn">deploy_canary</span>(self, model_id: <span class="cls">str</span>):
+        baseline = <span class="kw">await</span> self.<span class="fn">get_baseline_metrics</span>()
+        phases = list(<span class="cls">RolloutPhase</span>)
+        <span class="kw">for</span> phase <span class="kw">in</span> phases:
+            <span class="kw">await</span> self.traffic.<span class="fn">set_weight</span>(model_id, phase.value)
+            <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(300)  <span class="cm"># 5min soak</span>
+            canary = <span class="kw">await</span> self.<span class="fn">get_canary_metrics</span>(model_id)
+            <span class="kw">if not</span> self.<span class="fn">is_healthy</span>(canary, baseline):
+                <span class="kw">await</span> self.<span class="fn">rollback</span>(model_id)
+                <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"rolled_back"</span>, <span class="str">"phase"</span>: phase}
+        <span class="kw">await</span> self.registry.<span class="fn">promote</span>(model_id)
+        <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"promoted"</span>}
+
+    <span class="kw">def</span> <span class="fn">is_healthy</span>(self, canary, baseline):
+        acc_ok = baseline.accuracy - canary.accuracy < self.accuracy_thr
+        lat_ok = canary.p99_latency_ms < baseline.p99_latency_ms * self.latency_thr
+        err_ok = canary.error_rate < baseline.error_rate * 1.5
+        <span class="kw">return</span> acc_ok <span class="kw">and</span> lat_ok <span class="kw">and</span> err_ok</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#39</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Mixture of Experts Router with Learned Gating</h3>
+        <p>A custom Mixture of Experts (MoE) transformer layer with a learned top-k gating network that dynamically routes tokens to specialized expert sub-networks. Implements load-balanced routing with auxiliary loss, expert capacity constraints, and gradient-based expert utilization tracking for efficient sparse model training.</p>
+        <div class="arch-diagram">
+          <span class="node">[Input Tokens]</span> <span class="arrow">&rarr;</span> <span class="node">[Gating Network]</span> <span class="arrow">&rarr;</span> <span class="node">[Top-K Expert Selection]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Expert 1]</span> | <span class="node">[Expert 2]</span> | ... | <span class="node">[Expert N]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Weighted Combine]</span> <span class="arrow">&rarr;</span> <span class="node">[Load Balancer Loss]</span> <span class="arrow">&rarr;</span> <span class="node">[Output]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">DeepSpeed</span><span class="tech-tag">CUDA</span><span class="tech-tag">Weights &amp; Biases</span><span class="tech-tag">Hugging Face</span><span class="tech-tag">einops</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">models/moe_layer.py</span></div>
+          <div class="code-body"><span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+
+<span class="kw">class</span> <span class="cls">TopKGating</span>(nn.Module):
+    <span class="str">"""Learned gating with load-balancing auxiliary loss."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, dim, num_experts, top_k=2):
+        <span class="fn">super</span>().__init__()
+        self.gate = nn.<span class="cls">Linear</span>(dim, num_experts, bias=<span class="kw">False</span>)
+        self.top_k = top_k
+        self.num_experts = num_experts
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        logits = self.<span class="fn">gate</span>(x)  <span class="cm"># (batch, seq, experts)</span>
+        scores = F.<span class="fn">softmax</span>(logits, dim=-1)
+        top_vals, top_idx = scores.<span class="fn">topk</span>(self.top_k, dim=-1)
+        top_vals = top_vals / top_vals.<span class="fn">sum</span>(dim=-1, keepdim=<span class="kw">True</span>)
+        <span class="cm"># Load-balancing loss</span>
+        density = scores.<span class="fn">mean</span>(dim=(0, 1))
+        aux_loss = self.num_experts * (density * density).<span class="fn">sum</span>()
+        <span class="kw">return</span> top_vals, top_idx, aux_loss
+
+<span class="kw">class</span> <span class="cls">MoELayer</span>(nn.Module):
+    <span class="str">"""Sparse MoE layer with capacity-constrained routing."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, dim, num_experts=8, top_k=2, ffn_mult=4):
+        <span class="fn">super</span>().__init__()
+        self.gating = <span class="cls">TopKGating</span>(dim, num_experts, top_k)
+        self.experts = nn.<span class="cls">ModuleList</span>([
+            nn.<span class="cls">Sequential</span>(
+                nn.<span class="cls">Linear</span>(dim, dim * ffn_mult),
+                nn.<span class="cls">GELU</span>(),
+                nn.<span class="cls">Linear</span>(dim * ffn_mult, dim),
+            ) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(num_experts)
+        ])
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        B, S, D = x.shape
+        weights, indices, aux_loss = self.<span class="fn">gating</span>(x)
+        output = torch.<span class="fn">zeros_like</span>(x)
+        <span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(self.gating.top_k):
+            expert_idx = indices[:, :, k]
+            expert_wt = weights[:, :, k].unsqueeze(-1)
+            <span class="kw">for</span> e <span class="kw">in</span> <span class="fn">range</span>(len(self.experts)):
+                mask = (expert_idx == e)
+                <span class="kw">if</span> mask.<span class="fn">any</span>():
+                    tokens = x[mask]
+                    output[mask] += expert_wt[mask] * self.experts[e](tokens)
+        <span class="kw">return</span> output, aux_loss</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#40</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Multi-Modal Screen Agent with Visual Grounding</h3>
+        <p>A vision-language agent that observes application screenshots, understands UI elements through visual grounding, plans multi-step actions, and executes them via keyboard/mouse automation. Uses Set-of-Mark prompting for precise element targeting and a reflexion loop for self-correction when actions fail to achieve the intended state.</p>
+        <div class="arch-diagram">
+          <span class="node">[Screenshot]</span> <span class="arrow">&rarr;</span> <span class="node">[Vision Encoder]</span> <span class="arrow">&rarr;</span> <span class="node">[SoM Annotator]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Action Planner (LLM)]</span> <span class="arrow">&rarr;</span> <span class="node">[Grounding Verifier]</span> <span class="arrow">&rarr;</span> <span class="node">[Executor]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[State Observer]</span> <span class="arrow">&rarr;</span> <span class="node">[Reflexion Loop]</span> <span class="arrow">&rarr;</span> <span class="node">[Goal Checker]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">PyAutoGUI</span><span class="tech-tag">Florence-2</span><span class="tech-tag">Pillow</span><span class="tech-tag">asyncio</span><span class="tech-tag">Pydantic</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">agents/screen_agent.py</span></div>
+          <div class="code-body"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+<span class="kw">from</span> PIL <span class="kw">import</span> Image
+
+<span class="kw">class</span> <span class="cls">ActionType</span>(Enum):
+    CLICK = <span class="str">"click"</span>
+    TYPE = <span class="str">"type"</span>
+    SCROLL = <span class="str">"scroll"</span>
+    KEY = <span class="str">"key"</span>
+    WAIT = <span class="str">"wait"</span>
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="cls">UIElement</span>:
+    label: <span class="cls">str</span>
+    bbox: tuple[<span class="cls">int</span>, <span class="cls">int</span>, <span class="cls">int</span>, <span class="cls">int</span>]
+    element_type: <span class="cls">str</span>
+    confidence: <span class="cls">float</span>
+
+<span class="kw">class</span> <span class="cls">ScreenAgent</span>:
+    <span class="str">"""Vision-language agent with Set-of-Mark grounding."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vision_model, llm, executor):
+        self.vision = vision_model
+        self.llm = llm
+        self.executor = executor
+        self.memory = []
+
+    <span class="kw">async def</span> <span class="fn">observe</span>(self) -> list[<span class="cls">UIElement</span>]:
+        screenshot = <span class="kw">await</span> self.executor.<span class="fn">capture</span>()
+        elements = <span class="kw">await</span> self.vision.<span class="fn">detect_ui</span>(screenshot)
+        annotated = self.<span class="fn">set_of_mark</span>(screenshot, elements)
+        <span class="kw">return</span> elements, annotated
+
+    <span class="kw">async def</span> <span class="fn">act</span>(self, goal: <span class="cls">str</span>, max_steps=10):
+        <span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(max_steps):
+            elements, annotated = <span class="kw">await</span> self.<span class="fn">observe</span>()
+            plan = <span class="kw">await</span> self.llm.<span class="fn">plan_action</span>(
+                goal=goal, screenshot=annotated,
+                elements=elements, history=self.memory
+            )
+            <span class="kw">if</span> plan.action == <span class="str">"done"</span>:
+                <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"success"</span>, <span class="str">"steps"</span>: step+1}
+            result = <span class="kw">await</span> self.executor.<span class="fn">execute</span>(plan)
+            self.memory.<span class="fn">append</span>({<span class="str">"action"</span>: plan, <span class="str">"result"</span>: result})
+            <span class="cm"># Reflexion: verify action had intended effect</span>
+            <span class="kw">if not await</span> self.<span class="fn">verify_state</span>(plan.expected_state):
+                <span class="kw">await</span> self.<span class="fn">self_correct</span>(plan, goal)
+        <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"max_steps_reached"</span>}
+
+    <span class="kw">def</span> <span class="fn">set_of_mark</span>(self, img, elements):
+        <span class="cm"># Annotate screenshot with numbered element markers</span>
+        annotated = img.<span class="fn">copy</span>()
+        <span class="kw">for</span> i, el <span class="kw">in</span> <span class="fn">enumerate</span>(elements):
+            self.<span class="fn">draw_mark</span>(annotated, i+1, el.bbox)
+        <span class="kw">return</span> annotated</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
   </div><!-- /projects-grid -->
 </div>
 </section>
