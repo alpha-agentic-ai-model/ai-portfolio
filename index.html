@@ -111,7 +111,7 @@ nav.scrolled{border-bottom-color:var(--glass-border);padding:10px 0}
 .code-dot:nth-child(2){border-color:#febc2e}
 .code-dot:nth-child(3){border-color:#28c840}
 .code-filename{margin-left:8px;font-size:.72rem;color:var(--text3);font-family:'JetBrains Mono',monospace}
-.code-body{padding:14px;font-family:'JetBrains Mono',monospace;font-size:.73rem;line-height:1.65;color:#c9d1d9;overflow-x:auto;max-height:180px}
+.code-body{white-space:pre;padding:14px;font-family:'JetBrains Mono',monospace;font-size:.73rem;line-height:1.65;color:#c9d1d9;overflow-x:auto;max-height:180px}
 .code-body .kw{color:#ff7b72}
 .code-body .fn{color:#d2a8ff}
 .code-body .str{color:#a5d6ff}
@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">40</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">46</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -284,7 +284,7 @@ footer p{font-size:.85rem;color:var(--text3)}
     <p>Production-grade AI systems built with cutting-edge frameworks</p>
   </div>
 
-  <div class="day-badge reveal">Day <span>86</span> &mdash; July 29, 2026</div>
+  <div class="day-badge reveal">Day <span>155</span> &mdash; October 6, 2026</div>
 
   <div class="filter-bar reveal">
     <button class="filter-btn active" data-filter="all">All</button>
@@ -2203,7 +2203,7 @@ client = instructor.<span class="fn">from_anthropic</span>(<span class="cls">Ant
             <span class="str">"role"</span>: <span class="str">"user"</span>,
             <span class="str">"content"</span>: <span class="str">f"Extract entities: {text}"</span>
         }]
-    )</span></div>
+    )</div>
         </div>
       </div>
       <div class="project-footer">
@@ -2779,6 +2779,376 @@ client = instructor.<span class="fn">from_anthropic</span>(<span class="cls">Ant
       </div>
       <div class="project-footer">
         <a href="#" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#41</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Sandboxed Agent Runtime with Capability-Scoped Permissions</h3>
+        <p>A supervisor that runs untrusted agent-generated code inside a gVisor-isolated container where every side effect must first clear a time-boxed, resource-scoped capability grant. Policy decisions are delegated to Open Policy Agent with deny-by-default fallback, so a prompt injection can only reach the narrow set of files, hosts and tools issued for that run.</p>
+        <div class="arch-diagram">
+          <span class="node">[Agent Plan]</span> <span class="arrow">&rarr;</span> <span class="node">[Capability Broker]</span> <span class="arrow">&rarr;</span> <span class="node">[OPA Policy Plane]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Grant Ledger (TTL + budget)]</span> <span class="arrow">&rarr;</span> <span class="node">[Syscall Interceptor]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[gVisor Sandbox]</span> <span class="arrow">&rarr;</span> <span class="node">[Egress Filter]</span> <span class="arrow">&rarr;</span> <span class="node">[Append-Only Audit Log]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MCP SDK</span><span class="tech-tag">gVisor</span><span class="tech-tag">Open Policy Agent</span><span class="tech-tag">Docker</span><span class="tech-tag">asyncio</span><span class="tech-tag">Pydantic</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">runtime/sandbox_supervisor.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">SandboxSupervisor</span>:
+    <span class="str">&quot;&quot;&quot;Supervises untrusted agent code inside a capability-scoped sandbox.
+
+    Every side effect the agent attempts is routed through check() before it
+    reaches a real syscall, so the blast radius of a prompt injection is
+    bounded by the grants issued for that specific run.
+    &quot;&quot;&quot;</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, policy: <span class="cls">PolicyEngine</span>, audit: <span class="cls">AuditLog</span>, spec: <span class="cls">Optional</span>[<span class="cls">SandboxSpec</span>] = <span class="kw">None</span>):
+        self.policy = policy
+        self.audit = audit
+        self.spec = spec <span class="kw">or</span> <span class="cls">SandboxSpec</span>()
+        self.grants: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">list</span>[<span class="cls">CapabilityGrant</span>]] = {}
+        self.usage: <span class="cls">dict</span>[<span class="cls">tuple</span>[<span class="cls">str</span>, <span class="cls">str</span>], <span class="cls">int</span>] = {}
+
+    <span class="kw">def</span> <span class="fn">issue</span>(self, run_id: <span class="cls">str</span>, capability: <span class="cls">Capability</span>, resource_glob: <span class="cls">str</span>, ttl_s: <span class="cls">int</span> = 300) -&gt; <span class="cls">CapabilityGrant</span>:
+        grant = <span class="cls">CapabilityGrant</span>(capability, resource_glob, time.<span class="fn">time</span>() + ttl_s)
+        self.grants.<span class="fn">setdefault</span>(run_id, []).<span class="fn">append</span>(grant)
+        <span class="kw">return</span> grant
+
+    <span class="kw">async</span> <span class="kw">def</span> <span class="fn">check</span>(self, run_id: <span class="cls">str</span>, principal: <span class="cls">str</span>, capability: <span class="cls">Capability</span>, resource: <span class="cls">str</span>) -&gt; <span class="kw">None</span>:
+        now = time.<span class="fn">time</span>()
+        local = [g <span class="kw">for</span> g <span class="kw">in</span> self.grants.<span class="fn">get</span>(run_id, []) <span class="kw">if</span> g.capability <span class="kw">is</span> capability]
+        <span class="kw">if</span> <span class="kw">not</span> <span class="fn">any</span>(g.<span class="fn">permits</span>(resource, now) <span class="kw">for</span> g <span class="kw">in</span> local):
+            <span class="kw">await</span> self.audit.<span class="fn">record</span>(run=run_id, cap=capability.value, resource=resource, verdict=<span class="str">&quot;no_grant&quot;</span>)
+            <span class="kw">raise</span> <span class="cls">PolicyDenied</span>(<span class="str">f&quot;no active grant for {capability.value} on {resource}&quot;</span>)
+        counter_key = (run_id, capability.value)
+        self.usage[counter_key] = self.usage.<span class="fn">get</span>(counter_key, 0) + 1
+        <span class="kw">if</span> self.usage[counter_key] &gt; min(g.max_invocations <span class="kw">for</span> g <span class="kw">in</span> local):
+            <span class="kw">raise</span> <span class="cls">PolicyDenied</span>(<span class="str">f&quot;invocation budget exhausted for {capability.value}&quot;</span>)
+        <span class="kw">if</span> <span class="kw">not</span> <span class="kw">await</span> self.policy.<span class="fn">evaluate</span>(principal, capability, resource):
+            <span class="kw">await</span> self.audit.<span class="fn">record</span>(run=run_id, cap=capability.value, resource=resource, verdict=<span class="str">&quot;opa_deny&quot;</span>)
+            <span class="kw">raise</span> <span class="cls">PolicyDenied</span>(<span class="str">f&quot;policy denied {capability.value} on {resource}&quot;</span>)
+        <span class="kw">await</span> self.audit.<span class="fn">record</span>(run=run_id, cap=capability.value, resource=resource, verdict=<span class="str">&quot;allow&quot;</span>)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/41-sandboxed-agent-runtime-capability-scoped" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#42</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Late-Interaction Retrieval Engine with Residual Compression</h3>
+        <p>A ColBERT-style multi-vector retriever that scores queries against per-token document embeddings via MaxSim instead of collapsing passages into one vector. A PLAID-inspired two-stage index prunes candidates by centroid, then rescores exactly on 2-bit residual codes, recovering the recall of late interaction at single-vector storage cost.</p>
+        <div class="arch-diagram">
+          <span class="node">[Query]</span> <span class="arrow">&rarr;</span> <span class="node">[Token Encoder]</span> <span class="arrow">&rarr;</span> <span class="node">[128-d Normalised Vectors]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Centroid Pruning (IVF)]</span> <span class="arrow">&rarr;</span> <span class="node">[Candidate Depth 1024]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Residual Decode]</span> <span class="arrow">&rarr;</span> <span class="node">[Exact MaxSim Rescore]</span> <span class="arrow">&rarr;</span> <span class="node">[Cross-Encoder Rerank]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">ColBERTv2</span><span class="tech-tag">PLAID</span><span class="tech-tag">FAISS</span><span class="tech-tag">NumPy</span><span class="tech-tag">FastAPI</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">retrieval/late_interaction_engine.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">PlaidIndex</span>:
+    <span class="str">&quot;&quot;&quot;Two-stage PLAID index: centroid pruning, then exact MaxSim rescoring.&quot;&quot;&quot;</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, codec: <span class="cls">ResidualCodec</span>, cfg: <span class="cls">RetrievalConfig</span>):
+        self.codec = codec
+        self.cfg = cfg
+        self.doc_codes: <span class="cls">dict</span>[<span class="cls">int</span>, np.ndarray] = {}
+        self.doc_residuals: <span class="cls">dict</span>[<span class="cls">int</span>, np.ndarray] = {}
+        self.inverted: <span class="cls">dict</span>[<span class="cls">int</span>, <span class="cls">set</span>[<span class="cls">int</span>]] = {}
+
+    <span class="kw">def</span> <span class="fn">add</span>(self, doc_id: <span class="cls">int</span>, embeddings: np.ndarray) -&gt; <span class="kw">None</span>:
+        codes, residual = self.codec.<span class="fn">encode</span>(embeddings)
+        self.doc_codes[doc_id] = codes
+        self.doc_residuals[doc_id] = residual
+        <span class="kw">for</span> centroid_id <span class="kw">in</span> np.<span class="fn">unique</span>(codes):
+            self.inverted.<span class="fn">setdefault</span>(<span class="cls">int</span>(centroid_id), <span class="cls">set</span>()).<span class="fn">add</span>(doc_id)
+
+    <span class="kw">def</span> <span class="fn">generate_candidates</span>(self, query_emb: np.ndarray) -&gt; <span class="cls">list</span>[<span class="cls">int</span>]:
+        sims = query_emb @ self.codec.centroids.<span class="cls">T</span>
+        top_cells = np.<span class="fn">argsort</span>(-sims, axis=1)[:, : self.cfg.ncells].<span class="fn">ravel</span>()
+        scores: <span class="cls">dict</span>[<span class="cls">int</span>, <span class="cls">float</span>] = {}
+        <span class="kw">for</span> cell <span class="kw">in</span> top_cells:
+            <span class="kw">for</span> doc_id <span class="kw">in</span> self.inverted.<span class="fn">get</span>(<span class="cls">int</span>(cell), ()):  <span class="cm"># centroid-pruned fan-in</span>
+                scores[doc_id] = scores.<span class="fn">get</span>(doc_id, 0.0) + 1.0
+        ranked = sorted(scores, key=scores.get, reverse=<span class="kw">True</span>)
+        <span class="kw">return</span> ranked[: self.cfg.candidate_depth]
+
+    <span class="kw">def</span> <span class="fn">maxsim</span>(self, query_emb: np.ndarray, doc_id: <span class="cls">int</span>) -&gt; <span class="cls">float</span>:
+        doc = self.codec.<span class="fn">decode</span>(self.doc_codes[doc_id], self.doc_residuals[doc_id])
+        <span class="kw">return</span> <span class="cls">float</span>(np.max(query_emb @ doc.<span class="cls">T</span>, axis=1).sum())</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/42-late-interaction-retrieval-engine" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#43</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>Speculative Decoding Server with Adaptive Draft Selection</h3>
+        <p>A draft-and-verify decoding loop that keeps generation lossless through rejection sampling while a Thompson-sampling bandit picks the draft model and speculation depth per request. Acceptance rate and draft latency are tracked online, so gamma walks toward its 1/(1-alpha) optimum instead of sitting at a hand-tuned constant that degrades on long prefills.</p>
+        <div class="arch-diagram">
+          <span class="node">[Request]</span> <span class="arrow">&rarr;</span> <span class="node">[Draft Bandit]</span> <span class="arrow">&rarr;</span> <span class="node">[Draft Model (gamma tokens)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Target Verify Pass]</span> <span class="arrow">&rarr;</span> <span class="node">[Rejection Sampler]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Accepted Prefix + Bonus Token]</span> <span class="arrow">&rarr;</span> <span class="node">[KV Rollback]</span> <span class="arrow">&rarr;</span> <span class="node">[Gamma Tuner]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">vLLM</span><span class="tech-tag">PyTorch</span><span class="tech-tag">EAGLE-2</span><span class="tech-tag">CUDA</span><span class="tech-tag">Ray Serve</span><span class="tech-tag">Triton</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">serving/speculative_engine.py</span></div>
+          <div class="code-body"><span class="dec">@</span><span class="dec">dataclass</span>
+<span class="kw">class</span> <span class="cls">DraftProfile</span>:
+    <span class="str">&quot;&quot;&quot;Runtime statistics for one candidate draft model.&quot;&quot;&quot;</span>
+    name: <span class="cls">str</span>
+    params_b: <span class="cls">float</span>
+    gamma: <span class="cls">int</span> = 5                     <span class="cm"># tokens proposed per verification step</span>
+    accepted: <span class="cls">int</span> = 0
+    proposed: <span class="cls">int</span> = 0
+    draft_latency_ms: deque = <span class="fn">field</span>(default_factory=<span class="kw">lambda</span>: <span class="fn">deque</span>(maxlen=256))
+
+    @property
+    <span class="kw">def</span> <span class="fn">acceptance_rate</span>(self) -&gt; <span class="cls">float</span>:
+        <span class="kw">return</span> self.accepted / self.proposed <span class="kw">if</span> self.proposed <span class="kw">else</span> 0.5
+
+    @property
+    <span class="kw">def</span> <span class="fn">mean_draft_ms</span>(self) -&gt; <span class="cls">float</span>:
+        <span class="kw">return</span> sum(self.draft_latency_ms) / len(self.draft_latency_ms) <span class="kw">if</span> self.draft_latency_ms <span class="kw">else</span> 1.0
+
+    <span class="kw">def</span> <span class="fn">expected_speedup</span>(self, target_ms: <span class="cls">float</span>) -&gt; <span class="cls">float</span>:
+        <span class="str">&quot;&quot;&quot;Leviathan-style expected tokens per verification pass, cost adjusted.&quot;&quot;&quot;</span>
+        a = min(max(self.acceptance_rate, 1e-3), 0.999)
+        expected_tokens = (1 - a ** (self.gamma + 1)) / (1 - a)
+        cost = target_ms + self.gamma * self.mean_draft_ms
+        <span class="kw">return</span> expected_tokens * target_ms / max(cost, 1e-6)
+
+<span class="kw">def</span> <span class="fn">_rejection_sample</span>(self, proposals, draft_probs, target_probs):
+    <span class="str">&quot;&quot;&quot;Lossless acceptance: keep token with p=min(1, q_target/q_draft).&quot;&quot;&quot;</span>
+    accepted = []
+    <span class="kw">for</span> i, token <span class="kw">in</span> enumerate(proposals):
+        p_target = target_probs[i, token]
+        p_draft = draft_probs[i, token]
+        <span class="kw">if</span> torch.<span class="fn">rand</span>(1, device=token.device) &lt; torch.<span class="fn">clamp</span>(p_target / (p_draft + 1e-9), max=1.0):
+            accepted.<span class="fn">append</span>(token)
+            <span class="kw">continue</span>
+        residual = torch.<span class="fn">clamp</span>(target_probs[i] - draft_probs[i], min=0)
+        residual = residual / residual.sum().<span class="fn">clamp</span>(min=1e-9)
+        <span class="kw">return</span> torch.<span class="fn">stack</span>(accepted) <span class="kw">if</span> accepted <span class="kw">else</span> proposals[:0], torch.<span class="fn">multinomial</span>(residual, 1)[0]
+    bonus = torch.<span class="fn">multinomial</span>(target_probs[-1], num_samples=1)[0]
+    <span class="kw">return</span> torch.<span class="fn">stack</span>(accepted), bonus</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/43-speculative-decoding-adaptive-drafts" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#44</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>Tiered KV-Cache Service with Prefix-Aware Routing</h3>
+        <p>A fleet-level KV-cache control plane that content-addresses prompt prefixes into 16-token blocks and cascades them HBM to DRAM to NVMe to object store rather than discarding them. A radix trie over block hashes routes each request to the replica that already holds the longest matching prefix, turning repeated system prompts into near-zero prefill cost.</p>
+        <div class="arch-diagram">
+          <span class="node">[Prompt Tokens]</span> <span class="arrow">&rarr;</span> <span class="node">[Rolling Block Hash]</span> <span class="arrow">&rarr;</span> <span class="node">[Prefix Radix Trie]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Replica Router (longest match)]</span> <span class="arrow">&rarr;</span> <span class="node">[Admission Control]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[HBM]</span> <span class="arrow">&rarr;</span> <span class="node">[DRAM]</span> <span class="arrow">&rarr;</span> <span class="node">[NVMe]</span> <span class="arrow">&rarr;</span> <span class="node">[Object Store]</span> <span class="arrow">&rarr;</span> <span class="node">[Prometheus]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">vLLM</span><span class="tech-tag">LMCache</span><span class="tech-tag">Redis</span><span class="tech-tag">Kubernetes</span><span class="tech-tag">Prometheus</span><span class="tech-tag">NumPy</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">cache/kv_tier_manager.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">KVTierManager</span>:
+    <span class="str">&quot;&quot;&quot;Tiered KV-cache service: hashes prefixes, places blocks, routes requests.
+
+    Blocks are content-addressed by the chain of token ids that produced them,
+    so any replica holding the same prefix can serve a prefill hit. Cold blocks
+    cascade HBM -&gt; DRAM -&gt; NVMe -&gt; object store instead of being discarded.
+    &quot;&quot;&quot;</span>
+
+    <span class="cls">BLOCK_TOKENS</span> = 16
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, budgets: <span class="cls">dict</span>[<span class="cls">Tier</span>, <span class="cls">TierBudget</span>], bytes_per_token: <span class="cls">int</span> = 2 * 32 * 128 * 2):
+        self.budgets = budgets
+        self.bytes_per_token = bytes_per_token
+        self.blocks: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">BlockMeta</span>] = {}
+        self.trie = <span class="cls">PrefixTrie</span>()
+        self.stats = {<span class="str">&quot;hits&quot;</span>: 0, <span class="str">&quot;misses&quot;</span>: 0, <span class="str">&quot;promotions&quot;</span>: 0, <span class="str">&quot;evictions&quot;</span>: 0, <span class="str">&quot;spills&quot;</span>: 0}
+
+    <span class="kw">def</span> <span class="fn">hash_chain</span>(self, token_ids: <span class="cls">list</span>[<span class="cls">int</span>]) -&gt; <span class="cls">list</span>[<span class="cls">str</span>]:
+        chain, running = [], hashlib.<span class="fn">blake2b</span>(digest_size=16)
+        <span class="kw">for</span> start <span class="kw">in</span> range(0, len(token_ids) - self.<span class="cls">BLOCK_TOKENS</span> + 1, self.<span class="cls">BLOCK_TOKENS</span>):
+            block = token_ids[start: start + self.<span class="cls">BLOCK_TOKENS</span>]
+            running.<span class="fn">update</span>(np.<span class="fn">asarray</span>(block, dtype=np.int32).<span class="fn">tobytes</span>())
+            chain.<span class="fn">append</span>(running.<span class="fn">hexdigest</span>())
+        <span class="kw">return</span> chain
+
+    <span class="kw">def</span> <span class="fn">route</span>(self, token_ids: <span class="cls">list</span>[<span class="cls">int</span>], candidates: <span class="cls">list</span>[<span class="cls">str</span>]) -&gt; <span class="cls">dict</span>:
+        <span class="str">&quot;&quot;&quot;Prefix-aware routing: send the request where the KV already lives.&quot;&quot;&quot;</span>
+        chain = self.<span class="fn">hash_chain</span>(token_ids)
+        matched, replicas = self.trie.<span class="fn">longest_match</span>(chain)
+        eligible = [r <span class="kw">for</span> r <span class="kw">in</span> candidates <span class="kw">if</span> r <span class="kw">in</span> replicas] <span class="kw">or</span> candidates
+        hit_ratio = matched * self.<span class="cls">BLOCK_TOKENS</span> / max(len(token_ids), 1)
+        self.stats[<span class="str">&quot;hits&quot;</span> <span class="kw">if</span> matched <span class="kw">else</span> <span class="str">&quot;misses&quot;</span>] += 1
+        <span class="kw">return</span> {<span class="str">&quot;replica&quot;</span>: eligible[0], <span class="str">&quot;prefix_hit_tokens&quot;</span>: matched * self.<span class="cls">BLOCK_TOKENS</span>,
+                <span class="str">&quot;prefix_hit_ratio&quot;</span>: round(hit_ratio, 3), <span class="str">&quot;chain_len&quot;</span>: len(chain)}</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/44-tiered-kv-cache-prefix-routing" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#45</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Hybrid Mamba-Transformer for 128k Context Pretraining</h3>
+        <p>A language-model backbone that interleaves Mamba-2 selective state-space blocks with a periodic sliding-window attention layer, trading quadratic attention for linear-time recurrence on most layers. The retained attention layers preserve exact token-to-token recall, which is what pure SSM stacks lose on retrieval-style long-context evaluations.</p>
+        <div class="arch-diagram">
+          <span class="node">[Tokens]</span> <span class="arrow">&rarr;</span> <span class="node">[Embedding]</span> <span class="arrow">&rarr;</span> <span class="node">[Selective Scan Block x5]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Sliding-Window Attention + RoPE]</span> <span class="arrow">&rarr;</span> <span class="node">[RMSNorm]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Gated MLP]</span> <span class="arrow">&rarr;</span> <span class="node">[Recurrent State Carry]</span> <span class="arrow">&rarr;</span> <span class="node">[Tied LM Head]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">Mamba-2</span><span class="tech-tag">FlashAttention-2</span><span class="tech-tag">einops</span><span class="tech-tag">DeepSpeed</span><span class="tech-tag">Triton</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">models/hybrid_ssm.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">SelectiveScan</span>(nn.<span class="cls">Module</span>):
+    <span class="str">&quot;&quot;&quot;Mamba-2 selective state-space block with input-dependent A, B, C.&quot;&quot;&quot;</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cfg: <span class="cls">HybridConfig</span>):
+        super().<span class="fn">__init__</span>()
+        self.cfg = cfg
+        d_inner = cfg.d_model * cfg.expand
+        self.d_inner = d_inner
+        self.in_proj = nn.<span class="cls">Linear</span>(cfg.d_model, 2 * d_inner, bias=<span class="kw">False</span>)
+        self.conv1d = nn.<span class="cls">Conv1d</span>(d_inner, d_inner, kernel_size=cfg.d_conv,
+                                groups=d_inner, padding=cfg.d_conv - 1, bias=<span class="kw">True</span>)
+        self.x_proj = nn.<span class="cls">Linear</span>(d_inner, cfg.d_state * 2 + 1, bias=<span class="kw">False</span>)
+        self.dt_proj = nn.<span class="cls">Linear</span>(1, d_inner, bias=<span class="kw">True</span>)
+        self.<span class="cls">A_log</span> = nn.<span class="cls">Parameter</span>(torch.<span class="fn">log</span>(torch.<span class="fn">arange</span>(1, cfg.d_state + 1).<span class="cls">float</span>()).<span class="fn">repeat</span>(d_inner, 1))
+        self.<span class="cls">D</span> = nn.<span class="cls">Parameter</span>(torch.<span class="fn">ones</span>(d_inner))
+        self.out_proj = nn.<span class="cls">Linear</span>(d_inner, cfg.d_model, bias=<span class="kw">False</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x: torch.<span class="cls">Tensor</span>, state: <span class="cls">Optional</span>[torch.<span class="cls">Tensor</span>] = <span class="kw">None</span>):
+        b, seq_len, _ = x.shape
+        xz = self.<span class="fn">in_proj</span>(x)
+        x_in, gate = xz.<span class="fn">chunk</span>(2, dim=-1)
+        x_in = <span class="fn">rearrange</span>(self.<span class="fn">conv1d</span>(<span class="fn">rearrange</span>(x_in, <span class="str">&quot;b l d -&gt; b d l&quot;</span>))[..., :seq_len], <span class="str">&quot;b d l -&gt; b l d&quot;</span>)
+        x_in = <span class="cls">F</span>.<span class="fn">silu</span>(x_in)
+
+        proj = self.<span class="fn">x_proj</span>(x_in)
+        <span class="cls">B</span>, <span class="cls">C</span>, dt = proj.<span class="fn">split</span>([self.cfg.d_state, self.cfg.d_state, 1], dim=-1)
+        dt = <span class="cls">F</span>.<span class="fn">softplus</span>(self.<span class="fn">dt_proj</span>(dt))                      <span class="cm"># (b, l, d_inner)</span>
+        <span class="cls">A</span> = -torch.<span class="fn">exp</span>(self.<span class="cls">A_log</span>.<span class="cls">float</span>())                     <span class="cm"># (d_inner, d_state)</span>
+
+        y, state = self.<span class="fn">_scan</span>(x_in, dt, <span class="cls">A</span>, <span class="cls">B</span>, <span class="cls">C</span>, state)
+        y = y + x_in * self.<span class="cls">D</span>
+        <span class="kw">return</span> self.<span class="fn">out_proj</span>(y * <span class="cls">F</span>.<span class="fn">silu</span>(gate)), state</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/45-hybrid-mamba-transformer-long-context" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#46</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>RLVR Training Loop with GRPO and Sandboxed Verifiers</h3>
+        <p>A reinforcement-learning-from-verifiable-rewards pipeline where reward comes from executing the model&#x27;s own code against hidden tests in a network-isolated sandbox, not from a learned reward model. GRPO replaces the value network with group-relative advantages, and a pass-rate gate promotes the curriculum once the policy clears the difficulty tier it is training on.</p>
+        <div class="arch-diagram">
+          <span class="node">[Prompt Batch]</span> <span class="arrow">&rarr;</span> <span class="node">[vLLM Sampler (group of 8)]</span> <span class="arrow">&rarr;</span> <span class="node">[Rollouts]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Unit-Test Verifier (sandbox)]</span> <span class="arrow">&rarr;</span> <span class="node">[Format Verifier]</span> <span class="arrow">&rarr;</span> <span class="node">[Reward Router]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Group-Relative Advantage]</span> <span class="arrow">&rarr;</span> <span class="node">[Clipped PG + KL]</span> <span class="arrow">&rarr;</span> <span class="node">[Weight Sync]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">TRL GRPO</span><span class="tech-tag">vLLM</span><span class="tech-tag">Docker</span><span class="tech-tag">Ray</span><span class="tech-tag">Weights &amp; Biases</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">training/rlvr_grpo.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">GRPOTrainer</span>:
+    <span class="str">&quot;&quot;&quot;Group-Relative Policy Optimisation over verifiable rewards.
+
+    GRPO drops the value network: advantages are the z-scored rewards inside a
+    group of completions sampled from the same prompt, which makes the loop
+    cheap enough to run against a live vLLM sampler.
+    &quot;&quot;&quot;</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, policy, reference, sampler, router: <span class="cls">RewardRouter</span>, cfg: <span class="cls">GRPOConfig</span>):
+        self.policy, self.reference = policy, reference
+        self.sampler, self.router, self.cfg = sampler, router, cfg
+        self.optimizer = torch.optim.<span class="cls">AdamW</span>(policy.<span class="fn">parameters</span>(), lr=cfg.lr, weight_decay=0.0)
+        self.history: <span class="cls">list</span>[<span class="cls">dict</span>] = []
+
+    <span class="kw">async</span> <span class="kw">def</span> <span class="fn">collect_group</span>(self, prompt: <span class="cls">str</span>, meta: <span class="cls">dict</span>) -&gt; <span class="cls">list</span>[<span class="cls">Rollout</span>]:
+        completions = <span class="kw">await</span> self.sampler.<span class="fn">generate</span>(
+            prompt, n=self.cfg.group_size, temperature=self.cfg.temperature)
+        rollouts = [<span class="cls">Rollout</span>(prompt=prompt, completion=c.text, logprobs=c.logprobs)
+                    <span class="kw">for</span> c <span class="kw">in</span> completions]
+        rollouts = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*[self.router.<span class="fn">evaluate</span>(r, meta) <span class="kw">for</span> r <span class="kw">in</span> rollouts])
+        rewards = torch.<span class="fn">tensor</span>([r.reward <span class="kw">for</span> r <span class="kw">in</span> rollouts])
+        baseline, spread = rewards.<span class="fn">mean</span>(), rewards.<span class="fn">std</span>().<span class="fn">clamp</span>(min=self.cfg.reward_std_floor)
+        <span class="kw">for</span> rollout, reward <span class="kw">in</span> zip(rollouts, rewards):
+            rollout.advantage = <span class="cls">float</span>((reward - baseline) / spread)
+        <span class="kw">return</span> rollouts
+
+    <span class="kw">def</span> <span class="fn">grpo_loss</span>(self, rollouts: <span class="cls">list</span>[<span class="cls">Rollout</span>]) -&gt; torch.<span class="cls">Tensor</span>:
+        losses = []
+        <span class="kw">for</span> rollout <span class="kw">in</span> rollouts:
+            tokens = self.policy.<span class="fn">tokenize</span>(rollout.prompt, rollout.completion)
+            new_logprobs = self.policy.<span class="fn">token_logprobs</span>(tokens)
+            <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+                ref_logprobs = self.reference.<span class="fn">token_logprobs</span>(tokens)
+            ratio = torch.<span class="fn">exp</span>(new_logprobs - rollout.logprobs.<span class="fn">to</span>(new_logprobs.device))
+            clipped = torch.<span class="fn">clamp</span>(ratio, 1 - self.cfg.clip_eps, 1 + self.cfg.clip_eps)
+            pg = -torch.min(ratio * rollout.advantage, clipped * rollout.advantage).<span class="fn">mean</span>()
+            kl = (torch.<span class="fn">exp</span>(ref_logprobs - new_logprobs) - (ref_logprobs - new_logprobs) - 1).<span class="fn">mean</span>()
+            losses.<span class="fn">append</span>(pg + self.cfg.kl_coef * kl)
+        <span class="kw">return</span> torch.<span class="fn">stack</span>(losses).<span class="fn">mean</span>()</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/46-rlvr-grpo-verifiable-rewards" class="project-link link-code">View Code</a>
         <a href="#" class="project-link link-demo">Live Demo</a>
       </div>
     </div>

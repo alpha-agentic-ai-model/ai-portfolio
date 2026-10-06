@@ -52,6 +52,12 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 | 38 | Canary Deployment Controller for ML Models | MLOps | Kubernetes, Istio, MLflow, Prometheus |
 | 39 | Mixture of Experts Router with Learned Gating | Deep Learning | PyTorch, DeepSpeed, CUDA, einops |
 | 40 | Multi-Modal Screen Agent with Visual Grounding | Agentic AI | Claude API, PyAutoGUI, Florence-2, Pillow |
+| 41 | Sandboxed Agent Runtime with Capability-Scoped Permissions | Agentic AI | MCP SDK, gVisor, Open Policy Agent, Docker |
+| 42 | Late-Interaction Retrieval Engine with Residual Compression | RAG | PyTorch, ColBERTv2, PLAID, FAISS |
+| 43 | Speculative Decoding Server with Adaptive Draft Selection | LLM Engineering | vLLM, PyTorch, EAGLE-2, Ray Serve |
+| 44 | Tiered KV-Cache Service with Prefix-Aware Routing | MLOps | vLLM, LMCache, Redis, Kubernetes |
+| 45 | Hybrid Mamba-Transformer for 128k Context Pretraining | Deep Learning | PyTorch, Mamba-2, einops, DeepSpeed |
+| 46 | RLVR Training Loop with GRPO and Sandboxed Verifiers | LLM Engineering | PyTorch, TRL GRPO, vLLM, Ray |
 
 ## Contact
 
@@ -60,4 +66,4 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 - GitHub: [alpha-agentic-ai-model](https://github.com/alpha-agentic-ai-model)
 
 ---
-*Updated daily with new AI projects. Day 86 — July 29, 2026*
+*Updated daily with new AI projects. Day 155 — October 6, 2026*
