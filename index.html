@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">46</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">52</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -284,7 +284,7 @@ footer p{font-size:.85rem;color:var(--text3)}
     <p>Production-grade AI systems built with cutting-edge frameworks</p>
   </div>
 
-  <div class="day-badge reveal">Day <span>155</span> &mdash; October 6, 2026</div>
+  <div class="day-badge reveal">Day <span>167</span> &mdash; October 18, 2026</div>
 
   <div class="filter-bar reveal">
     <button class="filter-btn active" data-filter="all">All</button>
@@ -3149,6 +3149,317 @@ client = instructor.<span class="fn">from_anthropic</span>(<span class="cls">Ant
       </div>
       <div class="project-footer">
         <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/46-rlvr-grpo-verifiable-rewards" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#47</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Agent Trajectory Evaluator with Replayable Tool Mocks</h3>
+        <p>An evaluation harness that scores how an agent reached its answer, not just whether it did: tool-call precision and recall, redundant calls, and recovery from injected tool failures. Tool outputs are replayed from recorded fixtures keyed by a hash of the call, so agent regressions are caught deterministically in CI without hitting live APIs.</p>
+        <div class="arch-diagram">
+          <span class="node">[Eval Case Suite]</span> <span class="arrow">&rarr;</span> <span class="node">[Agent Under Test]</span> <span class="arrow">&rarr;</span> <span class="node">[Replay Toolbox (fixtures)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Fault Injector]</span> <span class="arrow">&rarr;</span> <span class="node">[Trajectory Recorder]</span> <span class="arrow">&rarr;</span> <span class="node">[Scorer]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Precision / Recall]</span> <span class="arrow">&rarr;</span> <span class="node">[Fault-Recovery Rate]</span> <span class="arrow">&rarr;</span> <span class="node">[CI Gate]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Python</span><span class="tech-tag">Claude Agent SDK</span><span class="tech-tag">pytest</span><span class="tech-tag">OpenTelemetry</span><span class="tech-tag">DuckDB</span><span class="tech-tag">GitHub Actions</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">evals/trajectory_eval.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">TrajectoryEvaluator</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, agent_factory: <span class="cls">Callable</span>[[<span class="cls">ReplayToolbox</span>], <span class="cls">Any</span>], fixture_dir: <span class="cls">Path</span>):
+        self.agent_factory = agent_factory
+        self.fixture_dir = fixture_dir
+
+    <span class="kw">def</span> <span class="fn">run_case</span>(self, case: <span class="cls">EvalCase</span>, fault_plan: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">int</span>] | <span class="cls">None</span> = <span class="cls">None</span>) -&gt; <span class="cls">Score</span>:
+        toolbox = <span class="cls">ReplayToolbox</span>(self.fixture_dir, fault_plan)
+        agent = self.<span class="fn">agent_factory</span>(toolbox)
+        traj: <span class="cls">Trajectory</span> = agent.<span class="fn">run</span>(case.prompt, max_steps=case.max_steps)
+        used = [c.name <span class="kw">for</span> c <span class="kw">in</span> traj.calls]
+        relevant = [n <span class="kw">for</span> n <span class="kw">in</span> used <span class="kw">if</span> n <span class="kw">in</span> case.expected_tools]
+        precision = <span class="fn">len</span>(relevant) / <span class="fn">len</span>(used) <span class="kw">if</span> used <span class="kw">else</span> 0.0
+        recall = <span class="fn">len</span>(<span class="cls">set</span>(relevant)) / <span class="fn">len</span>(<span class="cls">set</span>(case.expected_tools)) <span class="kw">if</span> case.expected_tools <span class="kw">else</span> 1.0
+        keys = [c.key <span class="kw">for</span> c <span class="kw">in</span> traj.calls <span class="kw">if</span> c.error <span class="kw">is</span> <span class="cls">None</span>]
+        redundant = <span class="fn">len</span>(keys) - <span class="fn">len</span>(<span class="cls">set</span>(keys))
+        faults_hit = <span class="fn">any</span>(c.error <span class="kw">and</span> c.error.<span class="fn">startswith</span>(<span class="str">&quot;InjectedFault&quot;</span>) <span class="kw">for</span> c <span class="kw">in</span> traj.calls)
+        success = <span class="cls">bool</span>(traj.final_answer) <span class="kw">and</span> case.<span class="fn">answer_check</span>(traj.final_answer)
+        <span class="kw">return</span> <span class="cls">Score</span>(case.task_id, success, <span class="fn">round</span>(precision, 3), <span class="fn">round</span>(recall, 3),
+                     redundant, faults_hit <span class="kw">and</span> success, <span class="fn">len</span>(traj.calls))
+
+    <span class="kw">def</span> <span class="fn">run_suite</span>(self, cases: <span class="cls">list</span>[<span class="cls">EvalCase</span>], with_faults: <span class="cls">bool</span> = <span class="cls">True</span>) -&gt; <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">Any</span>]:
+        rows = []
+        <span class="kw">for</span> case <span class="kw">in</span> cases:</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/47-agent-trajectory-evaluator-replay-mocks" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#48</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Citation-Grounded RAG with Claim-Level Verification</h3>
+        <p>A RAG pipeline that forces a citation on every sentence, splits each sentence into atomic claims and checks them against the cited passage with an NLI cross-encoder. Unsupported claims are rewritten or dropped before the answer ships, and a per-answer groundedness score feeds hallucination monitoring.</p>
+        <div class="arch-diagram">
+          <span class="node">[Query]</span> <span class="arrow">&rarr;</span> <span class="node">[Qdrant Retriever]</span> <span class="arrow">&rarr;</span> <span class="node">[Cited Generation [S#]]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Claim Decomposer]</span> <span class="arrow">&rarr;</span> <span class="node">[NLI Cross-Encoder]</span> <span class="arrow">&rarr;</span> <span class="node">[Support Check]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Repair Pass]</span> <span class="arrow">&rarr;</span> <span class="node">[Groundedness Score]</span> <span class="arrow">&rarr;</span> <span class="node">[Answer + Citations]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">Qdrant</span><span class="tech-tag">sentence-transformers</span><span class="tech-tag">DeBERTa-v3 NLI</span><span class="tech-tag">FastAPI</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">rag/citation_rag.py</span></div>
+          <div class="code-body"><span class="kw">def</span> <span class="fn">verify</span>(self, draft: <span class="cls">str</span>, passages: <span class="cls">list</span>[<span class="cls">Passage</span>]) -&gt; <span class="cls">list</span>[<span class="cls">Claim</span>]:
+    by_id = {p.sid: p <span class="kw">for</span> p <span class="kw">in</span> passages}
+    claims: <span class="cls">list</span>[<span class="cls">Claim</span>] = []
+    <span class="kw">for</span> sentence <span class="kw">in</span> re.<span class="fn">split</span>(<span class="str">r&quot;(?&lt;=[.!?])\s+&quot;</span>, draft.<span class="fn">strip</span>()):
+        cites = <span class="cls">CITE_RE</span>.<span class="fn">findall</span>(sentence)
+        source = cites[0] <span class="kw">if</span> cites <span class="kw">else</span> <span class="cls">None</span>
+        <span class="kw">for</span> atom <span class="kw">in</span> self.<span class="fn">decompose</span>(<span class="cls">CITE_RE</span>.<span class="fn">sub</span>(<span class="str">&quot;&quot;</span>, sentence)):
+            claim = <span class="cls">Claim</span>(atom, source)
+            <span class="kw">if</span> source <span class="kw">in</span> by_id:
+                logits = self.nli.<span class="fn">predict</span>([(by_id[source].text, atom)], apply_softmax=<span class="cls">True</span>)[0]
+                claim.entailment = <span class="cls">float</span>(logits[1])  <span class="cm"># index 1 = entailment</span>
+            claims.<span class="fn">append</span>(claim)
+    <span class="kw">return</span> claims
+
+<span class="kw">def</span> <span class="fn">repair</span>(self, draft: <span class="cls">str</span>, unsupported: <span class="cls">list</span>[<span class="cls">Claim</span>]) -&gt; <span class="cls">str</span>:
+    bad = <span class="str">&quot;\n&quot;</span>.<span class="fn">join</span>(<span class="str">f&quot;- {c.text}&quot;</span> <span class="kw">for</span> c <span class="kw">in</span> unsupported)
+    <span class="kw">return</span> self.<span class="fn">_ask</span>(<span class="str">&quot;Remove or soften the listed unsupported claims. Keep all citations &quot;</span>
+                     <span class="str">&quot;for the remaining sentences unchanged.&quot;</span>,
+                     <span class="str">f&quot;Draft:\n{draft}\n\nUnsupported:\n{bad}&quot;</span>)
+
+<span class="kw">def</span> <span class="fn">answer</span>(self, query: <span class="cls">str</span>) -&gt; <span class="cls">GroundedAnswer</span>:
+    passages = self.<span class="fn">retrieve</span>(query)
+    draft = self.<span class="fn">generate</span>(query, passages)
+    claims = self.<span class="fn">verify</span>(draft, passages)
+    unsupported = [c <span class="kw">for</span> c <span class="kw">in</span> claims <span class="kw">if</span> c.entailment &lt; self.threshold]
+    <span class="kw">if</span> unsupported:
+        draft = self.<span class="fn">repair</span>(draft, unsupported)
+        claims = self.<span class="fn">verify</span>(draft, passages)
+    used = <span class="cls">set</span>(<span class="cls">CITE_RE</span>.<span class="fn">findall</span>(draft))
+    citations = {p.sid: p.url <span class="kw">for</span> p <span class="kw">in</span> passages <span class="kw">if</span> p.sid <span class="kw">in</span> used}</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/48-citation-grounded-rag-claim-verification" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#49</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>Automatic Prompt Optimizer with Bootstrapped Few-Shot Search</h3>
+        <p>Treats a prompt as a compilable program of instruction plus demonstrations, in the spirit of DSPy. Demos are bootstrapped from the model&#x27;s own correct traces, a meta-prompt proposes instruction variants, and successive halving on a dev split selects the best combination at a fraction of a full grid search&#x27;s cost.</p>
+        <div class="arch-diagram">
+          <span class="node">[Train Split]</span> <span class="arrow">&rarr;</span> <span class="node">[Bootstrap Demos (correct traces)]</span> <span class="arrow">&rarr;</span> <span class="node">[Demo Pool]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Meta-Prompt]</span> <span class="arrow">&rarr;</span> <span class="node">[Instruction Candidates]</span> <span class="arrow">&rarr;</span> <span class="node">[Candidate Sampler]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Successive Halving (dev)]</span> <span class="arrow">&rarr;</span> <span class="node">[Metric]</span> <span class="arrow">&rarr;</span> <span class="node">[Compiled Prompt]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">DSPy concepts</span><span class="tech-tag">Python</span><span class="tech-tag">Optuna</span><span class="tech-tag">MLflow</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">optim/prompt_optimizer.py</span></div>
+          <div class="code-body">    <span class="kw">def</span> <span class="fn">compile</span>(self, task_desc: <span class="cls">str</span>, seed_instruction: <span class="cls">str</span>, train: <span class="cls">list</span>[<span class="cls">Example</span>],
+                dev: <span class="cls">list</span>[<span class="cls">Example</span>], k_shots: <span class="cls">int</span> = 4, n_candidates: <span class="cls">int</span> = 24) -&gt; <span class="cls">Candidate</span>:
+        pool = self.<span class="fn">bootstrap_demos</span>(train, seed_instruction)
+        instructions = [seed_instruction] + self.<span class="fn">propose_instructions</span>(task_desc, pool)
+        candidates = {
+            <span class="cls">Candidate</span>(self.rng.<span class="fn">choice</span>(instructions),
+                      <span class="cls">tuple</span>(<span class="fn">sorted</span>(self.rng.<span class="fn">sample</span>(<span class="fn">range</span>(<span class="fn">len</span>(pool)), <span class="fn">min</span>(k_shots, <span class="fn">len</span>(pool))))))
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n_candidates)
+        }
+        survivors, budget = <span class="cls">list</span>(candidates), 8
+        <span class="cm"># successive halving: evaluate on growing dev slices, keep the top half each round</span>
+        <span class="kw">while</span> <span class="fn">len</span>(survivors) &gt; 1 <span class="kw">and</span> budget &lt;= <span class="fn">len</span>(dev):
+            batch = dev[:budget]
+            ranked = <span class="fn">sorted</span>(survivors, key=<span class="kw">lambda</span> c: self.<span class="fn">score</span>(c, pool, batch), reverse=<span class="cls">True</span>)
+            survivors = ranked[: <span class="fn">max</span>(1, <span class="fn">len</span>(ranked) // 2)]
+            budget *= 2
+        best = survivors[0]
+        <span class="fn">print</span>(<span class="str">f&quot;best dev score={self.score(best, pool, dev):.3f} demos={best.demos}&quot;</span>)
+        <span class="kw">return</span> best
+
+
+<span class="kw">def</span> <span class="fn">exact_match</span>(pred: <span class="cls">str</span>, gold: <span class="cls">str</span>) -&gt; <span class="cls">float</span>:</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/49-automatic-prompt-optimizer-bootstrapped-fewshot" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#50</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>SLO-Driven Autoscaler for LLM Inference Replicas</h3>
+        <p>A Kubernetes controller that scales vLLM replicas on the signals that matter for LLM serving: queue depth, time-to-first-token p95 and KV-cache pressure, instead of CPU. It sizes against a TTFT SLO with asymmetric cooldowns, one-step scale-down to protect warm caches, and a GPU cost ceiling.</p>
+        <div class="arch-diagram">
+          <span class="node">[vLLM Pods]</span> <span class="arrow">&rarr;</span> <span class="node">[Prometheus]</span> <span class="arrow">&rarr;</span> <span class="node">[Signal Reader]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Queue / TTFT / KV Sizing]</span> <span class="arrow">&rarr;</span> <span class="node">[Hysteresis + Cooldown]</span> <span class="arrow">&rarr;</span> <span class="node">[Budget Cap]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[K8s Scale API]</span> <span class="arrow">&rarr;</span> <span class="node">[Deployment]</span> <span class="arrow">&rarr;</span> <span class="node">[Grafana SLO Board]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Kubernetes</span><span class="tech-tag">vLLM</span><span class="tech-tag">Prometheus</span><span class="tech-tag">Python</span><span class="tech-tag">Grafana</span><span class="tech-tag">Helm</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">controller/autoscaler.py</span></div>
+          <div class="code-body"><span class="kw">def</span> <span class="fn">desired</span>(self, s: <span class="cls">Signals</span>) -&gt; <span class="cls">int</span>:
+    by_queue = math.<span class="fn">ceil</span>(s.queue / self.slo.max_queue_per_replica) <span class="kw">if</span> s.queue <span class="kw">else</span> 0
+    by_ttft = math.<span class="fn">ceil</span>(s.replicas * s.ttft_p95 / self.slo.ttft_p95_s) <span class="kw">if</span> s.ttft_p95 <span class="kw">else</span> 0
+    by_kv = s.replicas + 1 <span class="kw">if</span> s.kv_usage &gt; self.slo.kv_usage_high <span class="kw">else</span> 0
+    target = <span class="fn">max</span>(by_queue, by_ttft, by_kv, self.policy.min_replicas)
+    budget_cap = <span class="cls">int</span>(self.policy.hourly_budget // self.policy.gpu_hour_cost)
+    <span class="kw">return</span> <span class="fn">min</span>(target, self.policy.max_replicas, budget_cap)
+
+<span class="kw">def</span> <span class="fn">decide</span>(self, s: <span class="cls">Signals</span>, now: <span class="cls">float</span>) -&gt; <span class="cls">int</span>:
+    target = self.<span class="fn">desired</span>(s)
+    <span class="kw">if</span> target &gt; s.replicas <span class="kw">and</span> now - self.last_up &gt;= self.policy.scale_up_cooldown_s:
+        self.last_up = now
+        <span class="kw">return</span> target
+    under_slo = (s.ttft_p95 &lt; self.slo.ttft_p95_s * self.policy.scale_down_headroom
+                 <span class="kw">and</span> s.queue == 0)
+    <span class="kw">if</span> (target &lt; s.replicas <span class="kw">and</span> under_slo
+            <span class="kw">and</span> now - self.last_down &gt;= self.policy.scale_down_cooldown_s):
+        self.last_down = now
+        <span class="kw">return</span> s.replicas - 1  <span class="cm"># shrink one step at a time to protect warm KV caches</span>
+    <span class="kw">return</span> s.replicas
+
+<span class="kw">def</span> <span class="fn">apply</span>(self, replicas: <span class="cls">int</span>) -&gt; <span class="cls">None</span>:</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/50-slo-driven-llm-inference-autoscaler" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#51</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>TopK Sparse Autoencoder for LLM Interpretability</h3>
+        <p>Trains a TopK sparse autoencoder on residual-stream activations so individual latents line up with human-interpretable features. Includes unit-norm decoder columns, dead-latent resampling from high-error tokens, fraction-of-variance-unexplained tracking and a top-activating-context viewer for labelling features.</p>
+        <div class="arch-diagram">
+          <span class="node">[Text Corpus]</span> <span class="arrow">&rarr;</span> <span class="node">[HookedTransformer]</span> <span class="arrow">&rarr;</span> <span class="node">[Residual Stream (layer L)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[TopK Encoder]</span> <span class="arrow">&rarr;</span> <span class="node">[Sparse Latents]</span> <span class="arrow">&rarr;</span> <span class="node">[Linear Decoder]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[MSE / FVU]</span> <span class="arrow">&rarr;</span> <span class="node">[Dead-Latent Resampler]</span> <span class="arrow">&rarr;</span> <span class="node">[Feature Explorer]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">TransformerLens</span><span class="tech-tag">CUDA</span><span class="tech-tag">einops</span><span class="tech-tag">Weights &amp; Biases</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">interp/topk_sae.py</span></div>
+          <div class="code-body"><span class="kw">class</span> <span class="cls">TopKSAE</span>(nn.<span class="cls">Module</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cfg: <span class="cls">SAEConfig</span>):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        d_sae = cfg.d_model * cfg.expansion
+        self.k = cfg.k
+        self.b_pre = nn.<span class="cls">Parameter</span>(torch.<span class="fn">zeros</span>(cfg.d_model))
+        self.<span class="cls">W_enc</span> = nn.<span class="cls">Parameter</span>(torch.<span class="fn">empty</span>(cfg.d_model, d_sae))
+        self.b_enc = nn.<span class="cls">Parameter</span>(torch.<span class="fn">zeros</span>(d_sae))
+        self.<span class="cls">W_dec</span> = nn.<span class="cls">Parameter</span>(torch.<span class="fn">empty</span>(d_sae, cfg.d_model))
+        nn.init.<span class="fn">kaiming_uniform_</span>(self.<span class="cls">W_dec</span>)
+        <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+            self.<span class="cls">W_dec</span>.data = <span class="cls">F</span>.<span class="fn">normalize</span>(self.<span class="cls">W_dec</span>.data, dim=-1)
+            self.<span class="cls">W_enc</span>.data = self.<span class="cls">W_dec</span>.data.<span class="cls">T</span>.<span class="fn">clone</span>()
+
+    <span class="kw">def</span> <span class="fn">encode</span>(self, x: torch.<span class="cls">Tensor</span>) -&gt; torch.<span class="cls">Tensor</span>:
+        pre = (x - self.b_pre) @ self.<span class="cls">W_enc</span> + self.b_enc
+        vals, idx = torch.<span class="fn">topk</span>(<span class="cls">F</span>.<span class="fn">relu</span>(pre), self.k, dim=-1)
+        <span class="kw">return</span> torch.<span class="fn">zeros_like</span>(pre).<span class="fn">scatter_</span>(-1, idx, vals)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x: torch.<span class="cls">Tensor</span>) -&gt; <span class="cls">tuple</span>[torch.<span class="cls">Tensor</span>, torch.<span class="cls">Tensor</span>]:
+        z = self.<span class="fn">encode</span>(x)
+        <span class="kw">return</span> z @ self.<span class="cls">W_dec</span> + self.b_pre, z
+
+    <span class="dec">@torch.no_grad</span>()
+    <span class="kw">def</span> <span class="fn">normalize_decoder</span>(self) -&gt; <span class="cls">None</span>:
+        self.<span class="cls">W_dec</span>.data = <span class="cls">F</span>.<span class="fn">normalize</span>(self.<span class="cls">W_dec</span>.data, dim=-1)</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/51-sparse-autoencoder-llm-interpretability" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#52</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>MCP Server Conformance Fuzzer with Schema-Driven Tests</h3>
+        <p>A test harness that connects to any MCP server over stdio, reads each tool&#x27;s JSON Schema and generates both valid and adversarial arguments with Hypothesis. It flags crashes, invalid inputs that get accepted, malformed responses and latency-budget breaches, producing a conformance report before a server reaches production agents.</p>
+        <div class="arch-diagram">
+          <span class="node">[MCP Server (stdio)]</span> <span class="arrow">&rarr;</span> <span class="node">[list_tools]</span> <span class="arrow">&rarr;</span> <span class="node">[JSON Schemas]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Hypothesis Valid Args]</span> <span class="arrow">&rarr;</span> <span class="node">[Mutated Invalid Args]</span> <span class="arrow">&rarr;</span> <span class="node">[call_tool]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Conformance Checks]</span> <span class="arrow">&rarr;</span> <span class="node">[Latency Budget]</span> <span class="arrow">&rarr;</span> <span class="node">[Findings Report]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MCP Python SDK</span><span class="tech-tag">Hypothesis</span><span class="tech-tag">hypothesis-jsonschema</span><span class="tech-tag">jsonschema</span><span class="tech-tag">asyncio</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">fuzz/mcp_fuzzer.py</span></div>
+          <div class="code-body"><span class="kw">async</span> <span class="kw">def</span> <span class="fn">_call</span>(self, session: <span class="cls">ClientSession</span>, tool: <span class="cls">str</span>, args: <span class="cls">dict</span>, valid: <span class="cls">bool</span>) -&gt; <span class="cls">None</span>:
+    self.report.calls += 1
+    start = time.<span class="fn">perf_counter</span>()
+    <span class="kw">try</span>:
+        result = <span class="kw">await</span> asyncio.<span class="fn">wait_for</span>(session.<span class="fn">call_tool</span>(tool, args), timeout=self.budget * 2)
+    <span class="kw">except</span> asyncio.<span class="cls">TimeoutError</span>:
+        self.report.findings.<span class="fn">append</span>(<span class="cls">Finding</span>(tool, <span class="str">&quot;slow&quot;</span>, args, <span class="str">&quot;no response within 2x budget&quot;</span>))
+        <span class="kw">return</span>
+    <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> exc:  <span class="cm"># transport-level failure = server crashed or broke protocol</span>
+        self.report.findings.<span class="fn">append</span>(<span class="cls">Finding</span>(tool, <span class="str">&quot;crash&quot;</span>, args, <span class="fn">repr</span>(exc)[:300]))
+        <span class="kw">return</span>
+    elapsed = time.<span class="fn">perf_counter</span>() - start
+    <span class="kw">if</span> elapsed &gt; self.budget:
+        self.report.findings.<span class="fn">append</span>(<span class="cls">Finding</span>(tool, <span class="str">&quot;slow&quot;</span>, args, <span class="str">f&quot;{elapsed:.2f}s&quot;</span>))
+    <span class="kw">if</span> <span class="kw">not</span> <span class="fn">isinstance</span>(result.content, <span class="cls">list</span>):
+        self.report.findings.<span class="fn">append</span>(<span class="cls">Finding</span>(tool, <span class="str">&quot;malformed_response&quot;</span>, args, <span class="str">&quot;content not a list&quot;</span>))
+    <span class="kw">if</span> <span class="kw">not</span> valid <span class="kw">and</span> <span class="kw">not</span> result.isError:
+        self.report.findings.<span class="fn">append</span>(
+            <span class="cls">Finding</span>(tool, <span class="str">&quot;accepted_invalid&quot;</span>, args, <span class="str">&quot;invalid input returned isError=false&quot;</span>))
+    <span class="kw">if</span> valid <span class="kw">and</span> result.isError:
+        text = <span class="str">&quot; &quot;</span>.<span class="fn">join</span>(<span class="fn">getattr</span>(c, <span class="str">&quot;text&quot;</span>, <span class="str">&quot;&quot;</span>) <span class="kw">for</span> c <span class="kw">in</span> result.content)
+        <span class="kw">if</span> <span class="str">&quot;Traceback&quot;</span> <span class="kw">in</span> text <span class="kw">or</span> <span class="str">&quot;Internal&quot;</span> <span class="kw">in</span> text:
+            self.report.findings.<span class="fn">append</span>(<span class="cls">Finding</span>(tool, <span class="str">&quot;crash&quot;</span>, args, text[:300]))
+
+<span class="kw">def</span> <span class="fn">_sample</span>(self, strategy: st.<span class="cls">SearchStrategy</span>[<span class="cls">dict</span>]) -&gt; <span class="cls">list</span>[<span class="cls">dict</span>]:
+    samples: <span class="cls">list</span>[<span class="cls">dict</span>] = []</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/52-mcp-server-conformance-fuzzer" class="project-link link-code">View Code</a>
         <a href="#" class="project-link link-demo">Live Demo</a>
       </div>
     </div>

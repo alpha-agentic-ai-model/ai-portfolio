@@ -58,6 +58,12 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 | 44 | Tiered KV-Cache Service with Prefix-Aware Routing | MLOps | vLLM, LMCache, Redis, Kubernetes |
 | 45 | Hybrid Mamba-Transformer for 128k Context Pretraining | Deep Learning | PyTorch, Mamba-2, einops, DeepSpeed |
 | 46 | RLVR Training Loop with GRPO and Sandboxed Verifiers | LLM Engineering | PyTorch, TRL GRPO, vLLM, Ray |
+| 47 | Agent Trajectory Evaluator with Replayable Tool Mocks | Agentic AI | Python, Claude Agent SDK, pytest, OpenTelemetry |
+| 48 | Citation-Grounded RAG with Claim-Level Verification | RAG | Claude API, Qdrant, sentence-transformers, DeBERTa-v3 NLI |
+| 49 | Automatic Prompt Optimizer with Bootstrapped Few-Shot Search | LLM Engineering | Claude API, DSPy concepts, Python, Optuna |
+| 50 | SLO-Driven Autoscaler for LLM Inference Replicas | MLOps | Kubernetes, vLLM, Prometheus, Python |
+| 51 | TopK Sparse Autoencoder for LLM Interpretability | Deep Learning | PyTorch, TransformerLens, CUDA, einops |
+| 52 | MCP Server Conformance Fuzzer with Schema-Driven Tests | Agentic AI | MCP Python SDK, Hypothesis, hypothesis-jsonschema, jsonschema |
 
 ## Contact
 
@@ -66,4 +72,4 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 - GitHub: [alpha-agentic-ai-model](https://github.com/alpha-agentic-ai-model)
 
 ---
-*Updated daily with new AI projects. Day 155 — October 6, 2026*
+*Updated daily with new AI projects. Day 167 — October 18, 2026*
