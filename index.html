@@ -200,7 +200,7 @@ footer p{font-size:.85rem;color:var(--text3)}
       <a href="mailto:manikanta.pudoka.ai@gmail.com" class="btn btn-outline">Get in Touch</a>
     </div>
     <div class="hero-stats">
-      <div class="stat-item"><div class="stat-num" id="projCount">58</div><div class="stat-label">AI Projects</div></div>
+      <div class="stat-item"><div class="stat-num" id="projCount">64</div><div class="stat-label">AI Projects</div></div>
       <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Technologies</div></div>
       <div class="stat-item"><div class="stat-num">2026</div><div class="stat-label">Latest Tech</div></div>
     </div>
@@ -284,7 +284,7 @@ footer p{font-size:.85rem;color:var(--text3)}
     <p>Production-grade AI systems built with cutting-edge frameworks</p>
   </div>
 
-  <div class="day-badge reveal">Day <span>169</span> &mdash; October 20, 2026</div>
+  <div class="day-badge reveal">Day <span>179</span> &mdash; October 30, 2026</div>
 
   <div class="filter-bar reveal">
     <button class="filter-btn active" data-filter="all">All</button>
@@ -3776,6 +3776,324 @@ client = instructor.<span class="fn">from_anthropic</span>(<span class="cls">Ant
       </div>
       <div class="project-footer">
         <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/58-stateful-mcp-session-broker" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#59</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Sub-Agent Delegation Harness with Isolated Contexts</h3>
+        <p>An orchestrator plans a goal into subtasks and hands each one to a fresh sub-agent with its own message history, tool allowlist and turn budget. Only a short, JSON-validated report comes back, so the orchestrator's context holds conclusions instead of raw tool output and long jobs stay within the window.</p>
+        <div class="arch-diagram">
+          <span class="node">[Goal]</span> <span class="arrow">&rarr;</span> <span class="node">[Orchestrator Planner]</span> <span class="arrow">&rarr;</span> <span class="node">[Subtask List]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Sub-Agent Pool (isolated contexts)]</span> <span class="arrow">&rarr;</span> <span class="node">[Scoped Tool Calls]</span> <span class="arrow">&rarr;</span> <span class="node">[JSON Reports]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Report Digest]</span> <span class="arrow">&rarr;</span> <span class="node">[Final Synthesis]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">Tool Use</span><span class="tech-tag">asyncio</span><span class="tech-tag">Python dataclasses</span><span class="tech-tag">JSON Schema</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">agents/delegation_harness.py</span></div>
+          <div class="code-body">    <span class="kw">async</span> <span class="kw">def</span> <span class="fn">run</span>(self) -&gt; <span class="cls">SubAgentReport</span>:
+        used_in = 0
+        <span class="kw">for</span> turn <span class="kw">in</span> <span class="fn">range</span>(1, self.spec.max_turns + 1):
+            resp = <span class="kw">await</span> client.messages.<span class="fn">create</span>(
+                model=<span class="cls">MODEL</span>,
+                max_tokens=self.spec.max_output_tokens,
+                system=<span class="str">f&quot;You are the {self.spec.role} sub-agent. {REPORT_INSTRUCTIONS}&quot;</span>,
+                tools=[t.<span class="fn">spec</span>() <span class="kw">for</span> t <span class="kw">in</span> self.tools.<span class="fn">values</span>()],
+                messages=self.messages,
+            )
+            used_in += resp.usage.input_tokens
+            self.messages.<span class="fn">append</span>({<span class="str">&quot;role&quot;</span>: <span class="str">&quot;assistant&quot;</span>, <span class="str">&quot;content&quot;</span>: resp.content})
+            <span class="kw">if</span> resp.stop_reason != <span class="str">&quot;tool_use&quot;</span>:
+                <span class="kw">return</span> self.<span class="fn">_parse_report</span>(resp, turn, used_in)
+            results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*[self.<span class="fn">_exec</span>(b) <span class="kw">for</span> b <span class="kw">in</span> resp.content <span class="kw">if</span> b.type == <span class="str">&quot;tool_use&quot;</span>])
+            self.messages.<span class="fn">append</span>({<span class="str">&quot;role&quot;</span>: <span class="str">&quot;user&quot;</span>, <span class="str">&quot;content&quot;</span>: <span class="cls">list</span>(results)})
+        <span class="kw">return</span> <span class="cls">SubAgentReport</span>(self.spec.role, <span class="str">&quot;budget_exhausted&quot;</span>, <span class="str">&quot;Turn budget exhausted.&quot;</span>, [], turn, used_in)
+
+    <span class="kw">async</span> <span class="kw">def</span> <span class="fn">_exec</span>(self, block: <span class="cls">Any</span>) -&gt; <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">Any</span>]:
+        tool = self.tools.<span class="fn">get</span>(block.name)
+        <span class="kw">if</span> tool <span class="kw">is</span> <span class="kw">None</span>:   <span class="cm"># tool not in this sub-agent&#x27;s allowlist</span>
+            out, err = <span class="str">f&quot;tool &#x27;{block.name}&#x27; not permitted for {self.spec.role}&quot;</span>, <span class="kw">True</span>
+        <span class="kw">else</span>:
+            <span class="kw">try</span>:
+                out, err = (<span class="kw">await</span> tool.<span class="fn">fn</span>(block.input))[:8000], <span class="kw">False</span>
+            <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> exc:  <span class="cm"># surface failures to the model, not the orchestrator</span>
+                out, err = <span class="str">f&quot;{type(exc).__name__}: {exc}&quot;</span>, <span class="kw">True</span>
+        <span class="kw">return</span> {<span class="str">&quot;type&quot;</span>: <span class="str">&quot;tool_result&quot;</span>, <span class="str">&quot;tool_use_id&quot;</span>: block.id, <span class="str">&quot;content&quot;</span>: out, <span class="str">&quot;is_error&quot;</span>: err}</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/59-subagent-delegation-harness-isolated-contexts" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="rag">
+      <div class="project-header">
+        <span class="project-num">#60</span>
+        <span class="project-category cat-rag">RAG</span>
+      </div>
+      <div class="project-body">
+        <h3>Online Retrieval Quality Monitor with LLM-Graded Relevance</h3>
+        <p>Samples live RAG traffic, grades each retrieved chunk with an LLM, and tracks precision@k, nDCG@k and query-embedding drift as Prometheus metrics. A CUSUM detector raises an alert on a sustained nDCG drop, so a bad re-index or embedding change shows up before answer quality complaints do.</p>
+        <div class="arch-diagram">
+          <span class="node">[Retriever Call]</span> <span class="arrow">&rarr;</span> <span class="node">[Monitor Wrapper]</span> <span class="arrow">&rarr;</span> <span class="node">[Sampler (5%)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[LLM Relevance Grader]</span> <span class="arrow">&rarr;</span> <span class="node">[precision@k / nDCG@k]</span> <span class="arrow">&rarr;</span> <span class="node">[CUSUM Detector]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Embedding Centroid Drift]</span> <span class="arrow">&rarr;</span> <span class="node">[Prometheus]</span> <span class="arrow">&rarr;</span> <span class="node">[Alerts]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">Claude API</span><span class="tech-tag">NumPy</span><span class="tech-tag">Prometheus</span><span class="tech-tag">CUSUM</span><span class="tech-tag">Python</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">monitoring/retrieval_monitor.py</span></div>
+          <div class="code-body"><span class="kw">def</span> <span class="fn">precision_at_k</span>(grades: <span class="cls">list</span>[<span class="cls">int</span>]) -&gt; <span class="cls">float</span>:
+    <span class="kw">return</span> <span class="fn">sum</span>(g &gt; 0 <span class="kw">for</span> g <span class="kw">in</span> grades) / <span class="fn">max</span>(1, <span class="fn">len</span>(grades))
+
+
+<span class="kw">def</span> <span class="fn">ndcg_at_k</span>(grades: <span class="cls">list</span>[<span class="cls">int</span>]) -&gt; <span class="cls">float</span>:
+    dcg = <span class="fn">sum</span>((2**g - 1) / math.<span class="fn">log2</span>(i + 2) <span class="kw">for</span> i, g <span class="kw">in</span> <span class="fn">enumerate</span>(grades))
+    ideal = <span class="fn">sum</span>((2**g - 1) / math.<span class="fn">log2</span>(i + 2) <span class="kw">for</span> i, g <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">sorted</span>(grades, reverse=<span class="kw">True</span>)))
+    <span class="kw">return</span> dcg / ideal <span class="kw">if</span> ideal &gt; 0 <span class="kw">else</span> 0.0
+
+
+<span class="dec">@</span><span class="dec">dataclass</span>
+<span class="kw">class</span> <span class="cls">RetrievalMonitor</span>:
+    index_name: <span class="cls">str</span>
+    baseline_centroid: np.ndarray
+    baseline_ndcg: <span class="cls">float</span>
+    sample_rate: <span class="cls">float</span> = 0.05
+    window: <span class="cls">int</span> = 200
+    ndcg_hist: deque = <span class="fn">field</span>(default_factory=<span class="kw">lambda</span>: <span class="fn">deque</span>(maxlen=200))
+    prec_hist: deque = <span class="fn">field</span>(default_factory=<span class="kw">lambda</span>: <span class="fn">deque</span>(maxlen=200))
+    emb_hist: deque = <span class="fn">field</span>(default_factory=<span class="kw">lambda</span>: <span class="fn">deque</span>(maxlen=200))
+    alerts: <span class="cls">list</span>[<span class="cls">str</span>] = <span class="fn">field</span>(default_factory=<span class="cls">list</span>)
+
+    <span class="kw">def</span> <span class="fn">__post_init__</span>(self) -&gt; <span class="kw">None</span>:
+        self.cusum = <span class="cls">CusumDetector</span>(target=self.baseline_ndcg)
+
+    <span class="kw">def</span> <span class="fn">observe</span>(self, ev: <span class="cls">RetrievalEvent</span>) -&gt; <span class="kw">None</span>:
+        self.emb_hist.<span class="fn">append</span>(ev.query_embedding / np.linalg.<span class="fn">norm</span>(ev.query_embedding))
+        <span class="kw">if</span> random.<span class="fn">random</span>() &gt; self.sample_rate <span class="kw">or</span> <span class="kw">not</span> ev.chunks:
+            <span class="kw">return</span>
+        grades = <span class="fn">grade_chunks</span>(ev.query, ev.chunks)
+        n = <span class="fn">ndcg_at_k</span>(grades)
+        self.ndcg_hist.<span class="fn">append</span>(n)
+        self.prec_hist.<span class="fn">append</span>(<span class="fn">precision_at_k</span>(grades))
+        <span class="kw">if</span> self.cusum.<span class="fn">update</span>(n):
+            self.alerts.<span class="fn">append</span>(<span class="str">f&quot;{self.index_name}: sustained nDCG drop (cusum={self.cusum.s:.2f})&quot;</span>)
+            self.cusum.s = 0.0
+        self.<span class="fn">publish</span>()</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/60-rag-retrieval-quality-monitor-drift" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="llm">
+      <div class="project-header">
+        <span class="project-num">#61</span>
+        <span class="project-category cat-llm">LLM Engineering</span>
+      </div>
+      <div class="project-body">
+        <h3>Codebase Context Engine with Symbol-Graph Ranking</h3>
+        <p>Parses a repository with tree-sitter into definitions and cross-file call edges, then ranks files with personalized PageRank seeded from what the coding agent is editing. The top signatures are packed into a token budget and served over MCP, giving agents a compact repo map instead of whole files.</p>
+        <div class="arch-diagram">
+          <span class="node">[Repository]</span> <span class="arrow">&rarr;</span> <span class="node">[tree-sitter Parser]</span> <span class="arrow">&rarr;</span> <span class="node">[Symbols + Call Edges]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Symbol Graph (networkx)]</span> <span class="arrow">&rarr;</span> <span class="node">[Personalized PageRank]</span> <span class="arrow">&rarr;</span> <span class="node">[Token-Budget Packer]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[MCP Tool: repo_map]</span> <span class="arrow">&rarr;</span> <span class="node">[Coding Agent]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">tree-sitter</span><span class="tech-tag">networkx</span><span class="tech-tag">tiktoken</span><span class="tech-tag">MCP Python SDK</span><span class="tech-tag">FastMCP</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">context/repo_map.py</span></div>
+          <div class="code-body">    <span class="kw">def</span> <span class="fn">repo_map</span>(self, focus: <span class="cls">list</span>[<span class="cls">str</span>], budget_tokens: <span class="cls">int</span> = 2000) -&gt; <span class="cls">str</span>:
+        ranks = self.<span class="fn">rank_files</span>(focus)
+        by_file: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">list</span>[<span class="cls">Symbol</span>]] = <span class="fn">defaultdict</span>(<span class="cls">list</span>)
+        <span class="kw">for</span> syms <span class="kw">in</span> self.symbols.<span class="fn">values</span>():
+            <span class="kw">for</span> s <span class="kw">in</span> syms:
+                by_file[s.file].<span class="fn">append</span>(s)
+        out, used = [], 0
+        <span class="kw">for</span> file <span class="kw">in</span> <span class="fn">sorted</span>(by_file, key=<span class="kw">lambda</span> f: -ranks.<span class="fn">get</span>(f, 0.0)):
+            block = [<span class="str">f&quot;{file}:&quot;</span>] + [<span class="str">f&quot;  L{s.line}: {s.signature}&quot;</span> <span class="kw">for</span> s <span class="kw">in</span> <span class="fn">sorted</span>(by_file[file], key=<span class="kw">lambda</span> s: s.line)]
+            text = <span class="str">&quot;\n&quot;</span>.<span class="fn">join</span>(block)
+            cost = <span class="fn">len</span>(enc.<span class="fn">encode</span>(text))
+            <span class="kw">if</span> used + cost &gt; budget_tokens:
+                <span class="kw">if</span> used == 0:   <span class="cm"># always include at least a truncated top file</span>
+                    out.<span class="fn">append</span>(enc.<span class="fn">decode</span>(enc.<span class="fn">encode</span>(text)[:budget_tokens]))
+                <span class="kw">break</span>
+            out.<span class="fn">append</span>(text)
+            used += cost
+        <span class="kw">return</span> <span class="str">&quot;\n&quot;</span>.<span class="fn">join</span>(out)
+
+
+_graphs: <span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">SymbolGraph</span>] = {}</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/61-codebase-context-engine-symbol-graph-mcp" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="mlops">
+      <div class="project-header">
+        <span class="project-num">#62</span>
+        <span class="project-category cat-mlops">MLOps</span>
+      </div>
+      <div class="project-body">
+        <h3>CI Evaluation Gate for LLM Changes with Paired Bootstrap</h3>
+        <p>Runs a baseline and a candidate prompt or model over the same eval set, scores each example with deterministic checks and a rubric grader, and computes a paired-bootstrap confidence interval per metric. The build fails only when a regression is statistically clear, and the result table is posted to the GitHub Actions summary.</p>
+        <div class="arch-diagram">
+          <span class="node">[Pull Request]</span> <span class="arrow">&rarr;</span> <span class="node">[GitHub Actions]</span> <span class="arrow">&rarr;</span> <span class="node">[Eval Dataset (JSONL)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Baseline Variant]</span> <span class="arrow">&rarr;</span> <span class="node">[Candidate Variant]</span> <span class="arrow">&rarr;</span> <span class="node">[Scorers + Rubric Grader]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Paired Bootstrap CI]</span> <span class="arrow">&rarr;</span> <span class="node">[Pass / Fail Gate]</span> <span class="arrow">&rarr;</span> <span class="node">[Step Summary]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">GitHub Actions</span><span class="tech-tag">Claude API</span><span class="tech-tag">NumPy</span><span class="tech-tag">PyYAML</span><span class="tech-tag">Paired Bootstrap</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">ci/eval_gate.py</span></div>
+          <div class="code-body"><span class="kw">def</span> <span class="fn">paired_bootstrap</span>(base: np.ndarray, cand: np.ndarray, n: <span class="cls">int</span> = 5000, seed: <span class="cls">int</span> = 0) -&gt; <span class="cls">tuple</span>[<span class="cls">float</span>, <span class="cls">float</span>]:
+    rng = np.random.<span class="fn">default_rng</span>(seed)
+    diffs = cand - base
+    idx = rng.<span class="fn">integers</span>(0, <span class="fn">len</span>(diffs), size=(n, <span class="fn">len</span>(diffs)))
+    means = diffs[idx].<span class="fn">mean</span>(axis=1)
+    <span class="kw">return</span> <span class="cls">float</span>(np.<span class="fn">percentile</span>(means, 2.5)), <span class="cls">float</span>(np.<span class="fn">percentile</span>(means, 97.5))
+
+
+<span class="kw">def</span> <span class="fn">run_variant</span>(v: <span class="cls">Variant</span>, dataset: <span class="cls">list</span>[<span class="cls">dict</span>], workers: <span class="cls">int</span> = 8) -&gt; <span class="cls">list</span>[<span class="cls">dict</span>[<span class="cls">str</span>, <span class="cls">float</span>]]:
+    <span class="kw">with</span> <span class="cls">ThreadPoolExecutor</span>(workers) <span class="kw">as</span> pool:
+        outputs = <span class="cls">list</span>(pool.<span class="fn">map</span>(<span class="kw">lambda</span> ex: <span class="fn">generate</span>(v, ex[<span class="str">&quot;input&quot;</span>]), dataset))
+    <span class="kw">return</span> [<span class="fn">score</span>(ex, out) <span class="kw">for</span> ex, out <span class="kw">in</span> <span class="fn">zip</span>(dataset, outputs)]
+
+
+<span class="kw">def</span> <span class="fn">gate</span>(base_scores, cand_scores, tolerance: <span class="cls">float</span>) -&gt; <span class="cls">list</span>[<span class="cls">GateResult</span>]:
+    results = []
+    <span class="kw">for</span> metric <span class="kw">in</span> base_scores[0]:
+        b = np.<span class="fn">array</span>([s[metric] <span class="kw">for</span> s <span class="kw">in</span> base_scores])
+        c = np.<span class="fn">array</span>([s[metric] <span class="kw">for</span> s <span class="kw">in</span> cand_scores])
+        lo, hi = <span class="fn">paired_bootstrap</span>(b, c)
+        <span class="cm"># Fail only if we are confident the candidate is worse by more than the tolerance.</span>
+        passed = hi &gt;= -tolerance
+        results.<span class="fn">append</span>(<span class="cls">GateResult</span>(metric, b.<span class="fn">mean</span>(), c.<span class="fn">mean</span>(), c.<span class="fn">mean</span>() - b.<span class="fn">mean</span>(), lo, hi, passed))
+    <span class="kw">return</span> results</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/62-llm-ci-eval-gate-paired-bootstrap" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="dl">
+      <div class="project-header">
+        <span class="project-num">#63</span>
+        <span class="project-category cat-dl">Deep Learning</span>
+      </div>
+      <div class="project-body">
+        <h3>Multi-Head Latent Attention with Compressed KV Cache</h3>
+        <p>A PyTorch implementation of multi-head latent attention, where keys and values are rebuilt from one shared low-rank latent and a decoupled RoPE key. The inference cache stores only that latent per token, cutting KV memory by about 7x versus standard multi-head attention in the default config.</p>
+        <div class="arch-diagram">
+          <span class="node">[Hidden States]</span> <span class="arrow">&rarr;</span> <span class="node">[Q Down/Up Proj]</span> <span class="arrow">&rarr;</span> <span class="node">[Content + RoPE Query]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[KV Down Proj]</span> <span class="arrow">&rarr;</span> <span class="node">[Latent c_kv + RoPE Key]</span> <span class="arrow">&rarr;</span> <span class="node">[KV Cache (latent only)]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[K/V Up Proj]</span> <span class="arrow">&rarr;</span> <span class="node">[SDPA]</span> <span class="arrow">&rarr;</span> <span class="node">[Output Proj]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">PyTorch</span><span class="tech-tag">RoPE</span><span class="tech-tag">RMSNorm</span><span class="tech-tag">SDPA</span><span class="tech-tag">bf16</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">model/mla.py</span></div>
+          <div class="code-body">    <span class="kw">def</span> <span class="fn">forward</span>(self, x: torch.Tensor, cache: <span class="cls">dict</span> | <span class="kw">None</span> = <span class="kw">None</span>, start_pos: <span class="cls">int</span> = 0) -&gt; torch.Tensor:
+        <span class="cls">B</span>, <span class="cls">T</span>, _ = x.shape
+        h, dh, dr = self.cfg.n_heads, self.cfg.d_head, self.cfg.d_rope
+        cos, sin = self.cos[start_pos:start_pos + <span class="cls">T</span>], self.sin[start_pos:start_pos + <span class="cls">T</span>]
+
+        q = self.<span class="fn">q_up</span>(self.<span class="fn">q_norm</span>(self.<span class="fn">q_down</span>(x))).<span class="fn">view</span>(<span class="cls">B</span>, <span class="cls">T</span>, h, dh + dr)
+        q_c, q_r = q.<span class="fn">split</span>([dh, dr], dim=-1)
+        q_r = <span class="fn">apply_rope</span>(q_r, cos[:, <span class="kw">None</span>], sin[:, <span class="kw">None</span>])
+
+        kv = self.<span class="fn">kv_down</span>(x)
+        c_kv, k_r = kv.<span class="fn">split</span>([self.cfg.d_latent_kv, dr], dim=-1)
+        c_kv = self.<span class="fn">kv_norm</span>(c_kv)
+        k_r = <span class="fn">apply_rope</span>(k_r, cos, sin)                       <span class="cm"># (B, T, dr), shared by heads</span>
+
+        <span class="kw">if</span> cache <span class="kw">is</span> <span class="kw">not</span> <span class="kw">None</span>:                                  <span class="cm"># cache only the latent + rope key</span>
+            <span class="kw">if</span> <span class="str">&quot;c_kv&quot;</span> <span class="kw">in</span> cache:
+                c_kv = torch.<span class="fn">cat</span>([cache[<span class="str">&quot;c_kv&quot;</span>], c_kv], dim=1)
+                k_r = torch.<span class="fn">cat</span>([cache[<span class="str">&quot;k_r&quot;</span>], k_r], dim=1)
+            cache[<span class="str">&quot;c_kv&quot;</span>], cache[<span class="str">&quot;k_r&quot;</span>] = c_kv, k_r
+
+        <span class="cls">S</span> = c_kv.shape[1]
+        k_c = self.<span class="fn">k_up</span>(c_kv).<span class="fn">view</span>(<span class="cls">B</span>, <span class="cls">S</span>, h, dh)
+        v = self.<span class="fn">v_up</span>(c_kv).<span class="fn">view</span>(<span class="cls">B</span>, <span class="cls">S</span>, h, dh)
+        k = torch.<span class="fn">cat</span>([k_c, k_r[:, :, <span class="kw">None</span>].<span class="fn">expand</span>(<span class="cls">B</span>, <span class="cls">S</span>, h, dr)], dim=-1)
+        qf = torch.<span class="fn">cat</span>([q_c, q_r], dim=-1)
+
+        attn = <span class="cls">F</span>.<span class="fn">scaled_dot_product_attention</span>(
+            qf.<span class="fn">transpose</span>(1, 2), k.<span class="fn">transpose</span>(1, 2), v.<span class="fn">transpose</span>(1, 2),
+            is_causal=cache <span class="kw">is</span> <span class="kw">None</span> <span class="kw">or</span> <span class="cls">T</span> &gt; 1, scale=1.0 / math.<span class="fn">sqrt</span>(dh + dr),
+        )
+        <span class="kw">return</span> self.<span class="fn">out</span>(attn.<span class="fn">transpose</span>(1, 2).<span class="fn">reshape</span>(<span class="cls">B</span>, <span class="cls">T</span>, h * dh))</div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/63-multi-head-latent-attention-compressed-kv" class="project-link link-code">View Code</a>
+        <a href="#" class="project-link link-demo">Live Demo</a>
+      </div>
+    </div>
+    <div class="project-card reveal" data-category="agent">
+      <div class="project-header">
+        <span class="project-num">#64</span>
+        <span class="project-category cat-agent">Agentic AI</span>
+      </div>
+      <div class="project-body">
+        <h3>Human-Approval MCP Server with Elicitation and Audit Log</h3>
+        <p>An MCP server that wraps risky actions such as refunds, deletions and outbound email, and pauses mid-call to ask the human through MCP elicitation to approve, edit or reject them. Low-risk calls under a policy threshold run automatically, and every decision is written to a hashed, append-only audit log.</p>
+        <div class="arch-diagram">
+          <span class="node">[Agent]</span> <span class="arrow">&rarr;</span> <span class="node">[MCP Tool Call]</span> <span class="arrow">&rarr;</span> <span class="node">[Risk Policy]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Auto-Approve (low risk)]</span> <span class="arrow">&rarr;</span> <span class="node">[ctx.elicit() Approval Form]</span> <span class="arrow">&rarr;</span> <span class="node">[Human Reviewer]</span><br>
+          <span class="arrow">&darr;</span><br>
+          <span class="node">[Append-only Audit Log]</span> <span class="arrow">&rarr;</span> <span class="node">[Side Effect]</span> <span class="arrow">&rarr;</span> <span class="node">[audit://recent]</span>
+        </div>
+        <div class="project-tech">
+          <span class="tech-tag">MCP Python SDK</span><span class="tech-tag">FastMCP</span><span class="tech-tag">Elicitation</span><span class="tech-tag">Pydantic</span><span class="tech-tag">Streamable HTTP</span>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><span class="code-filename">mcp/approval_server.py</span></div>
+          <div class="code-body"><span class="dec">@</span><span class="dec">mcp</span>.<span class="fn">tool</span>()
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">issue_refund</span>(order_id: <span class="cls">str</span>, amount_usd: <span class="cls">float</span>, reason: <span class="cls">str</span>, ctx: <span class="cls">Context</span>) -&gt; <span class="cls">str</span>:
+    <span class="str">&quot;&quot;&quot;Refund a customer order. Amounts above the policy threshold require human approval.&quot;&quot;&quot;</span>
+    payload = {<span class="str">&quot;order_id&quot;</span>: order_id, <span class="str">&quot;amount_usd&quot;</span>: amount_usd, <span class="str">&quot;reason&quot;</span>: reason}
+    <span class="kw">if</span> amount_usd &lt;= <span class="cls">AUTO_APPROVE_USD</span>:
+        ref = <span class="fn">audit</span>(<span class="str">&quot;issue_refund&quot;</span>, payload, <span class="str">&quot;auto_approved&quot;</span>, <span class="str">&quot;policy&quot;</span>)
+        <span class="kw">return</span> <span class="str">f&quot;Refunded ${amount_usd:.2f} on {order_id} (auto, audit {ref})&quot;</span>
+    data = <span class="kw">await</span> <span class="fn">ask</span>(ctx, <span class="str">f&quot;Refund ${amount_usd:.2f} on order {order_id}?\nReason: {reason}&quot;</span>, <span class="cls">RefundApproval</span>)
+    <span class="kw">if</span> data <span class="kw">is</span> <span class="kw">None</span> <span class="kw">or</span> data.decision == <span class="str">&quot;reject&quot;</span>:
+        ref = <span class="fn">audit</span>(<span class="str">&quot;issue_refund&quot;</span>, payload, <span class="str">&quot;rejected&quot;</span>, <span class="str">&quot;human&quot;</span>, <span class="fn">getattr</span>(data, <span class="str">&quot;note&quot;</span>, <span class="str">&quot;declined&quot;</span>))
+        <span class="kw">return</span> <span class="str">f&quot;Refund rejected by reviewer (audit {ref}). Do not retry without new information.&quot;</span>
+    payload[<span class="str">&quot;amount_usd&quot;</span>] = data.amount_usd
+    ref = <span class="fn">audit</span>(<span class="str">&quot;issue_refund&quot;</span>, payload, <span class="str">&quot;approved&quot;</span>, <span class="str">&quot;human&quot;</span>, data.note)
+    <span class="cm"># payments.refund(order_id, data.amount_usd)  # real side effect goes here</span>
+    <span class="kw">return</span> <span class="str">f&quot;Refunded ${data.amount_usd:.2f} on {order_id} (approved, audit {ref})&quot;</span></div>
+        </div>
+      </div>
+      <div class="project-footer">
+        <a href="https://github.com/alpha-agentic-ai-model/ai-portfolio/tree/main/projects/64-mcp-human-approval-elicitation-server" class="project-link link-code">View Code</a>
         <a href="#" class="project-link link-demo">Live Demo</a>
       </div>
     </div>

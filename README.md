@@ -70,6 +70,12 @@ Production-grade AI engineering portfolio showcasing cutting-edge projects acros
 | 56 | Multi-Tenant LoRA Adapter Serving with LRU Hot-Swap | MLOps | vLLM, FastAPI, boto3 / S3, LoRA |
 | 57 | Rectified Flow Image Generator with a Diffusion Transformer | Deep Learning | PyTorch, einops, torchvision, bf16 Autocast |
 | 58 | Stateful MCP Session Broker with Context Stitching | Agentic AI | MCP Python SDK, FastMCP, Redis, asyncio |
+| 59 | Sub-Agent Delegation Harness with Isolated Contexts | Agentic AI | Claude API, Tool Use, asyncio, Python dataclasses |
+| 60 | Online Retrieval Quality Monitor with LLM-Graded Relevance | RAG | Claude API, NumPy, Prometheus, CUSUM |
+| 61 | Codebase Context Engine with Symbol-Graph Ranking | LLM Engineering | tree-sitter, networkx, tiktoken, MCP Python SDK |
+| 62 | CI Evaluation Gate for LLM Changes with Paired Bootstrap | MLOps | GitHub Actions, Claude API, NumPy, PyYAML |
+| 63 | Multi-Head Latent Attention with Compressed KV Cache | Deep Learning | PyTorch, RoPE, RMSNorm, SDPA |
+| 64 | Human-Approval MCP Server with Elicitation and Audit Log | Agentic AI | MCP Python SDK, FastMCP, Elicitation, Pydantic |
 
 ## Contact
 

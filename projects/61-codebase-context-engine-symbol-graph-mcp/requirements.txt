@@ -1,0 +1,5 @@
+tree-sitter
+tree-sitter-python
+networkx
+tiktoken
+mcp
